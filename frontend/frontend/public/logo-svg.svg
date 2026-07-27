@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
+  <defs>
+    <linearGradient id="pagecraft-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="rgb(77, 255, 160)" />
+      <stop offset="100%" stop-color="rgb(0, 212, 255)" />
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="8" stdDeviation="8" flood-color="#000000" flood-opacity="0.15" />
+    </filter>
+  </defs>
+  <rect width="256" height="256" fill="url(#pagecraft-grad)" />
+  <path d="M80 64 H 128 C 154.5 64 176 85.5 176 112 C 176 138.5 154.5 160 128 160 H 112 V 192 H 80 V 64 Z M 112 128 H 128 C 136.8 128 144 120.8 144 112 C 144 103.2 136.8 96 128 96 H 112 V 128 Z" fill="#ffffff" filter="url(#shadow)" />
+</svg>
