@@ -1,0 +1,67 @@
+.navbar{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: .6% 5%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    background-color: rgba(0, 0, 0, 0.4);
+        backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid #ffffff1c;
+}
+.navbar-logo{
+    justify-self: flex-start;
+    width:20%;
+    gap: 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+ul{
+    display: flex;
+    list-style: none;
+    justify-content: center;
+    gap: 2rem;
+    align-items: center;
+    width: 30%;
+
+}
+.navbar-logo h3{
+    font-family: "Outfit", sans-serif;
+    font-size: 1.2rem
+}
+li{
+        font-size: 1rem;
+    font-weight: 200;
+
+    color: #868686;
+}
+img{
+   height: 50px;
+}
+.navbar-user {
+    font-family: var(--font-display);
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    white-space: nowrap;
+}
+.navbar-account {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    white-space: nowrap;
+    font-weight: 600;
+}
+.navbar-account:hover {
+    text-decoration: none;
+}
+.navbar-account i {
+    color: rgb(var(--color-green-rgb));
+}
+body.light-page .navbar {
+    background-color: rgba(10, 10, 10, 0.92);
+}
