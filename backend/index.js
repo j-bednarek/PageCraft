@@ -121,6 +121,90 @@ const DRAFT_LIMIT = 5;
 
 const FREE_PLAN_FALLBACK = { id: null, name: 'free', price_cents: 0, max_active_pages: 0 };
 
+function accountUser(user) {
+    return {
+        id: user.id,
+        name: user.name,
+        surname: user.surname,
+        email: user.email,
+        created_at: user.created_at
+    };
+}
+
+function publicPlan(plan) {
+    return {
+        id: plan.id,
+        name: plan.name,
+        price_cents: plan.price_cents,
+        max_active_pages: plan.max_active_pages
+    };
+}
+
+async function getCurrentPlan(userId) {
+    const subscription = await prisma.subscriptions.findFirst({
+        where: {
+            user_id: userId,
+            OR: [
+                { status: 'active' },
+                { status: 'canceled', current_period_end: { gt: new Date() } }
+            ]
+        },
+        orderBy: { created_at: 'desc' },
+        include: { plans: true }
+    });
+
+    if (subscription) {
+        return {
+            plan: subscription.plans,
+            subscription: {
+                status: subscription.status,
+                current_period_end: subscription.current_period_end
+            }
+        };
+    }
+
+    const freePlan = await prisma.plans.findUnique({ where: { name: 'free' } });
+    return { plan: freePlan || FREE_PLAN_FALLBACK, subscription: null };
+}
+
+function validateNewPassword(password) {
+    if (typeof password !== 'string' || password.length < PASSWORD_MIN) {
+        return `Hasło musi mieć co najmniej ${PASSWORD_MIN} znaków.`;
+    }
+    if (Buffer.byteLength(password, 'utf8') > PASSWORD_MAX_BYTES) {
+        return 'Hasło jest za długie.';
+    }
+    return null;
+}
+
+async function verifyCurrentPassword(userId, password) {
+    if (typeof password !== 'string' || !password ||
+        Buffer.byteLength(password, 'utf8') > PASSWORD_MAX_BYTES) {
+        return null;
+    }
+    const user = await prisma.users.findUnique({ where: { id: userId } });
+    if (!user) return null;
+    const ok = await bcrypt.compare(password, user.password_hash);
+    return ok ? user : null;
+}
+
+async function destroyUserSessions(userId, keepSid = '') {
+    await pool.query(
+        `DELETE FROM "session" WHERE (sess->>'userId')::int = $1 AND sid <> $2`,
+        [userId, keepSid]
+    );
+}
+
+const accountLimiter = rateLimit({
+    windowMs: FIFTEEN_MIN,
+    limit: 10,
+    skipSuccessfulRequests: true,
+    standardHeaders: 'draft-8',
+    legacyHeaders: false,
+    message: { error: 'Zbyt wiele prób. Spróbuj ponownie za 15 minut.' },
+    keyGenerator: (req) => 'user:' + req.session.userId,
+});
+
 app.post('/api/auth/register', registerLimiter, async (req, res) => {
     try {
         const { name, surname, email, password } = req.body;
@@ -249,6 +333,171 @@ app.post('/api/auth/logout', (req, res) => {
         res.clearCookie('connect.sid');
         res.json({ message: 'Wylogowano. Ciasteczko i sesja usunięte.' });
     });
+});
+
+app.get('/api/account', requireAuth, async (req, res) => {
+    try {
+        const userId = req.session.userId;
+
+        const user = await prisma.users.findUnique({ where: { id: userId } });
+        if (!user) {
+            return res.status(401).json({ error: 'Nie zalogowano.' });
+        }
+
+        const { plan, subscription } = await getCurrentPlan(userId);
+
+        const [published, total] = await Promise.all([
+            prisma.pages.count({ where: { user_id: userId, status: true } }),
+            prisma.pages.count({ where: { user_id: userId } })
+        ]);
+
+        res.json({
+            user: accountUser(user),
+            plan: publicPlan(plan),
+            subscription,
+            usage: {
+                published,
+                publishedLimit: plan.max_active_pages,
+                drafts: total - published,
+                draftLimit: DRAFT_LIMIT
+            }
+        });
+    } catch (error) {
+        console.error('Błąd pobierania konta:', error);
+        res.status(500).json({ error: 'Wystąpił błąd serwera.' });
+    }
+});
+
+app.get('/api/plans', async (req, res) => {
+    try {
+        const plans = await prisma.plans.findMany({ orderBy: { price_cents: 'asc' } });
+        res.json(plans.map(publicPlan));
+    } catch (error) {
+        console.error('Błąd pobierania planów:', error);
+        res.status(500).json({ error: 'Wystąpił błąd serwera.' });
+    }
+});
+
+app.patch('/api/account/profile', requireAuth, async (req, res) => {
+    try {
+        const { name, surname } = req.body;
+        if (typeof name !== 'string' || typeof surname !== 'string') {
+            return res.status(400).json({ error: 'Wypełnij wszystkie pola!' });
+        }
+        const cleanName = name.trim();
+        const cleanSurname = surname.trim();
+        if (!cleanName || !cleanSurname) {
+            return res.status(400).json({ error: 'Wypełnij wszystkie pola!' });
+        }
+        if (cleanName.length > 100 || cleanSurname.length > 100) {
+            return res.status(400).json({ error: 'Któreś z pól jest za długie.' });
+        }
+
+        const user = await prisma.users.update({
+            where: { id: req.session.userId },
+            data: { name: cleanName, surname: cleanSurname }
+        });
+
+        res.json({ message: 'Zapisano zmiany.', user: accountUser(user) });
+    } catch (error) {
+        console.error('Błąd zmiany profilu:', error);
+        res.status(500).json({ error: 'Wystąpił błąd serwera.' });
+    }
+});
+
+app.patch('/api/account/email', requireAuth, accountLimiter, async (req, res) => {
+    try {
+        const { newEmail, currentPassword } = req.body;
+
+        const user = await verifyCurrentPassword(req.session.userId, currentPassword);
+        if (!user) {
+            return res.status(401).json({ error: 'Nieprawidłowe hasło.' });
+        }
+
+        if (typeof newEmail !== 'string') {
+            return res.status(400).json({ error: 'Podaj poprawny adres email.' });
+        }
+        const cleanEmail = normalizeEmail(newEmail);
+        if (!EMAIL_REGEX.test(cleanEmail) || cleanEmail.length > 255) {
+            return res.status(400).json({ error: 'Podaj poprawny adres email.' });
+        }
+        if (cleanEmail === user.email) {
+            return res.status(400).json({ error: 'To jest Twój obecny adres email.' });
+        }
+
+        const updated = await prisma.users.update({
+            where: { id: user.id },
+            data: { email: cleanEmail }
+        });
+
+        res.json({ message: 'Adres email został zmieniony.', user: accountUser(updated) });
+    } catch (error) {
+        if (error.code === 'P2002') {
+            return res.status(409).json({ error: 'Ten adres email jest już zajęty.' });
+        }
+        console.error('Błąd zmiany emaila:', error);
+        res.status(500).json({ error: 'Wystąpił błąd serwera.' });
+    }
+});
+
+app.patch('/api/account/password', requireAuth, accountLimiter, async (req, res) => {
+    try {
+        const { currentPassword, newPassword } = req.body;
+
+        const user = await verifyCurrentPassword(req.session.userId, currentPassword);
+        if (!user) {
+            return res.status(401).json({ error: 'Nieprawidłowe obecne hasło.' });
+        }
+
+        const validationError = validateNewPassword(newPassword);
+        if (validationError) {
+            return res.status(400).json({ error: validationError });
+        }
+        if (await bcrypt.compare(newPassword, user.password_hash)) {
+            return res.status(400).json({ error: 'Nowe hasło musi różnić się od obecnego.' });
+        }
+
+        const hashedPassword = await bcrypt.hash(newPassword, BCRYPT_ROUNDS);
+        await prisma.users.update({
+            where: { id: user.id },
+            data: { password_hash: hashedPassword }
+        });
+
+        const rememberMe = typeof req.session.cookie.maxAge === 'number';
+        await destroyUserSessions(user.id, req.sessionID);
+        await startSession(req, user.id, rememberMe);
+
+        res.json({ message: 'Hasło zostało zmienione. Inne urządzenia zostały wylogowane.' });
+    } catch (error) {
+        console.error('Błąd zmiany hasła:', error);
+        res.status(500).json({ error: 'Wystąpił błąd serwera.' });
+    }
+});
+
+app.delete('/api/account', requireAuth, accountLimiter, async (req, res) => {
+    try {
+        const { password } = req.body;
+
+        const user = await verifyCurrentPassword(req.session.userId, password);
+        if (!user) {
+            return res.status(401).json({ error: 'Nieprawidłowe hasło.' });
+        }
+
+        await prisma.$transaction([
+            prisma.pages.deleteMany({ where: { user_id: user.id } }),
+            prisma.subscriptions.deleteMany({ where: { user_id: user.id } }),
+            prisma.users.delete({ where: { id: user.id } })
+        ]);
+
+        await destroyUserSessions(user.id);
+        req.session.destroy(() => {
+            res.clearCookie('connect.sid');
+            res.json({ message: 'Konto zostało usunięte.' });
+        });
+    } catch (error) {
+        console.error('Błąd usuwania konta:', error);
+        res.status(500).json({ error: 'Wystąpił błąd serwera.' });
+    }
 });
 
 app.listen(PORT, () => {
