@@ -4,6 +4,8 @@ import MainPage from './pages/mainPage/components/MainPage'
 import Navbar from './assets/components/Navbar'
 import Footer from './assets/components/Footer'
 import { AuthProvider } from './context/AuthContext'
+import ProtectedRoute from './assets/components/ProtectedRoute'
+import Account from './pages/account/Account'
 import './App.css'
 
 function App() {
@@ -14,6 +16,14 @@ function App() {
 
         <Routes>
           <Route path="/" element={<MainPage />} />
+          <Route
+            path="/account"
+            element={
+              <ProtectedRoute>
+                <Account />
+              </ProtectedRoute>
+            }
+          />
         </Routes>
 
         <Footer />
