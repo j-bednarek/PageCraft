@@ -335,6 +335,107 @@ app.post('/api/auth/logout', (req, res) => {
     });
 });
 
+app.post('/api/templates/seed', async (req, res) => {
+    try {
+        const newTemplate = await prisma.templates.create({
+            data: {
+                name: 'Portfolio Minimal',
+                category: 'portfolio',
+                component_key: 'template_1'
+            }
+        });
+        res.json({ message: 'Dodano szablon testowy!', template: newTemplate });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Błąd podczas dodawania szablonu' });
+    }
+});
+
+app.post('/api/pages', async (req, res) => {
+    try {
+        if (!req.session.userId) {
+            return res.status(401).json({ error: 'Brak dostępu. Musisz być zalogowany, aby tworzyć strony.' });
+        }
+
+        const { template_id, slug, content } = req.body;
+
+        if (slug) {
+            const existingPage = await prisma.pages.findUnique({
+                where: { slug: slug }
+            });
+            if (existingPage) {
+                return res.status(409).json({ error: 'Ten adres URL jest już zajęty przez innego użytkownika.' });
+            }
+        }
+
+        const newPage = await prisma.pages.create({
+            data: {
+                user_id: req.session.userId,
+                template_id: template_id,
+                slug: slug || null,
+                status: false,
+                content: content || {}
+            }
+        });
+
+        res.status(201).json({
+            message: 'Projekt strony został pomyślnie zapisany!',
+            page: newPage
+        });
+
+    } catch (error) {
+        console.error('Błąd podczas zapisywania strony:', error);
+        res.status(500).json({ error: 'Wystąpił błąd serwera.' });
+    }
+});
+
+app.get('/api/pages/my-projects', requireAuth, async (req, res) => {
+    try {
+        const userPages = await prisma.pages.findMany({
+            where: { user_id: req.session.userId },
+            orderBy: { updated_at: 'desc' },
+            select: {
+                id: true,
+                slug: true,
+                status: true,
+                created_at: true,
+                updated_at: true,
+                pending_deletion_at: true,
+                templates: { select: { name: true, thumbnail_url: true } }
+            }
+        });
+
+        res.json(userPages);
+    } catch (error) {
+        console.error('Błąd pobierania projektów:', error);
+        res.status(500).json({ error: 'Wystąpił błąd serwera.' });
+    }
+});
+
+app.get('/api/pages/:slug', async (req, res) => {
+    try {
+        const { slug } = req.params;
+
+        const page = await prisma.pages.findFirst({
+            where: { slug: slug, status: true },
+            select: {
+                slug: true,
+                content: true,
+                templates: { select: { component_key: true } }
+            }
+        });
+
+        if (!page) {
+            return res.status(404).json({ error: 'Nie znaleziono takiej strony.' });
+        }
+
+        res.json(page);
+    } catch (error) {
+        console.error('Błąd pobierania strony:', error);
+        res.status(500).json({ error: 'Wystąpił błąd serwera.' });
+    }
+});
+
 app.get('/api/account', requireAuth, async (req, res) => {
     try {
         const userId = req.session.userId;
