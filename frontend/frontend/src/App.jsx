@@ -6,6 +6,7 @@ import Footer from './assets/components/Footer'
 import { AuthProvider } from './context/AuthContext'
 import ProtectedRoute from './assets/components/ProtectedRoute'
 import Account from './pages/account/Account'
+import portfolioMinimal from './pages/templates/portfolioMinimal/definition';
 import './App.css'
 
 function App() {
@@ -16,6 +17,10 @@ function App() {
 
         <Routes>
           <Route path="/" element={<MainPage />} />
+          <Route
+            path="/dev/template"
+            element={<portfolioMinimal.component content={portfolioMinimal.defaultContent} />}
+          />
           <Route
             path="/account"
             element={
