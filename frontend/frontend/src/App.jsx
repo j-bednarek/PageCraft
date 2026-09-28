@@ -7,6 +7,7 @@ import { AuthProvider } from './context/AuthContext'
 import ProtectedRoute from './assets/components/ProtectedRoute'
 import Account from './pages/account/Account'
 import portfolioMinimal from './pages/templates/portfolioMinimal/definition';
+import Editor from './pages/editor/Editor';
 import './App.css'
 
 function App() {
@@ -18,9 +19,10 @@ function App() {
         <Routes>
           <Route path="/" element={<MainPage />} />
           <Route
-            path="/dev/template"
-            element={<portfolioMinimal.component content={portfolioMinimal.defaultContent} />}
-          />
+    path="/dev/template"
+    element={<portfolioMinimal.component content={portfolioMinimal.defaultContent} />}
+/>
+          <Route path="/dev/editor" element={<Editor />} />
           <Route
             path="/account"
             element={
