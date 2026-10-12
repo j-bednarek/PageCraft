@@ -1,11 +1,7 @@
-###
-POST http://localhost:3000/api/templates/seed
-Content-Type: application/json
+@api = http://localhost:3000/api
 
-{}
-
-###
-POST http://localhost:3000/api/auth/login
+### Logowanie (ciasteczko sesji zostaje zapamiętane dla kolejnych żądań)
+POST {{api}}/auth/login
 Content-Type: application/json
 
 {
@@ -13,26 +9,41 @@ Content-Type: application/json
   "password": "mojetrudnehaslo"
 }
 
-###
-POST http://localhost:3000/api/pages
+### Nowy szkic z szablonu
+# @name created
+POST {{api}}/pages
 Content-Type: application/json
 
 {
-  "template_id": 1,
-  "slug": "moje-portfolio-2026",
+  "templateKey": "portfolio_minimal",
+  "title": "Moje portfolio"
+}
+
+### Lista moich stron
+GET {{api}}/pages/my-projects
+
+### Szkic do kreatora
+GET {{api}}/pages/{{created.response.body.page.id}}
+
+### Zapis zmian (tak będzie robił autosave)
+PATCH {{api}}/pages/{{created.response.body.page.id}}
+Content-Type: application/json
+
+{
+  "title": "Portfolio 2026",
   "content": {
-    "theme": {
-      "primaryColor": "#ff5733",
-      "fontFamily": "Roboto"
-    },
-    "heroSection": {
-      "title": "Jakub",
-      "subtitle": "Moja pierwsza strona z kreatora SaaS"
-    }
+    "hero": { "title": { "text": "Jakub", "font": null, "color": null } }
   }
 }
-###
-GET http://localhost:3000/api/pages/my-projects
 
-###
-GET http://localhost:3000/api/pages/moje-portfolio-2026
+### Usunięcie szkicu
+DELETE {{api}}/pages/{{created.response.body.page.id}}
+
+### Cudza lub nieistniejąca strona: 404
+GET {{api}}/pages/999999
+
+### Publiczna strona (tylko opublikowane)
+GET {{api}}/public/pages/moje-portfolio-2026
+
+### Wylogowanie
+POST {{api}}/auth/logout
