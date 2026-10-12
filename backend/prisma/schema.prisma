@@ -11,14 +11,15 @@ model pages {
   id                  Int       @id @default(autoincrement())
   user_id             Int
   template_id         Int
+  title               String    @default("Untitled page") @db.VarChar(100)
   slug                String?   @unique(map: "idx_pages_slug", where: raw("(slug IS NOT NULL)")) @db.VarChar(255)
   status              Boolean   @default(false)
   content             Json      @default("{}")
   pending_deletion_at DateTime? @db.Timestamp(6)
   created_at          DateTime  @default(now()) @db.Timestamp(6)
-  updated_at          DateTime  @default(now()) @db.Timestamp(6)
+  updated_at          DateTime  @default(now()) @updatedAt @db.Timestamp(6)
   templates           templates @relation(fields: [template_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  users               users     @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users               users     @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
   @@index([pending_deletion_at], map: "idx_pages_pending_deletion", where: raw("(pending_deletion_at IS NOT NULL)"))
   @@index([user_id], map: "idx_pages_user_id")
@@ -41,7 +42,7 @@ model subscriptions {
   current_period_end       DateTime? @db.Timestamp(6)
   created_at               DateTime  @default(now()) @db.Timestamp(6)
   plans                    plans     @relation(fields: [plan_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  users                    users     @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users                    users     @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
   @@index([user_id], map: "idx_subscriptions_user_id")
 }
