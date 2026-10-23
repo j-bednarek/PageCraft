@@ -1,8 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 
 import MainPage from './pages/mainPage/components/MainPage'
-import Navbar from './assets/components/Navbar'
-import Footer from './assets/components/Footer'
+import AppLayout from './assets/components/AppLayout'
 import { AuthProvider } from './context/AuthContext'
 import ProtectedRoute from './assets/components/ProtectedRoute'
 import Account from './pages/account/Account'
@@ -14,26 +13,25 @@ function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
-        <Navbar />
-
         <Routes>
-          <Route path="/" element={<MainPage />} />
-          <Route
-    path="/dev/template"
-    element={<portfolioMinimal.component content={portfolioMinimal.defaultContent} />}
-/>
+          <Route element={<AppLayout />}>
+            <Route path="/" element={<MainPage />} />
+            <Route
+              path="/account"
+              element={
+                <ProtectedRoute>
+                  <Account />
+                </ProtectedRoute>
+              }
+            />
+          </Route>
+
           <Route path="/dev/editor" element={<Editor />} />
           <Route
-            path="/account"
-            element={
-              <ProtectedRoute>
-                <Account />
-              </ProtectedRoute>
-            }
+            path="/dev/template"
+            element={<portfolioMinimal.component content={portfolioMinimal.defaultContent} />}
           />
         </Routes>
-
-        <Footer />
       </BrowserRouter>
     </AuthProvider>
   )

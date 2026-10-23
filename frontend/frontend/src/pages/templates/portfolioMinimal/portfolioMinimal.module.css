@@ -1,36 +1,318 @@
+.page,
+.page * {
+    box-sizing: border-box;
+}
+
+.page :where(h1, h2, p, ul, li) {
+    margin: 0;
+    padding: 0;
+    width: auto;
+    font-size: inherit;
+    font-weight: 400;
+    line-height: inherit;
+    color: inherit;
+}
+
+.page :where(a) {
+    color: inherit;
+    text-decoration: none;
+}
+
+.page a:hover {
+    text-decoration: none;
+}
+
+.page :where(img) {
+    display: block;
+    max-width: 100%;
+}
+
 .page {
+    --pad: clamp(1.25rem, 5vw, 4rem);
+    --line: color-mix(in srgb, var(--ink) 14%, transparent);
+    --soft: color-mix(in srgb, var(--ink) 62%, var(--bg));
+    --card: color-mix(in srgb, var(--ink) 5%, var(--bg));
+
     min-height: 100vh;
     background: var(--bg);
-    color: var(--text);
-    font-family: var(--font), sans-serif;
-    margin-top:200px
+    color: var(--ink);
+    font-family: var(--font, system-ui, sans-serif);
+    font-size: 17px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+}
+
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    max-width: 1160px;
+    margin: 0 auto;
+    padding: 1.5rem var(--pad);
+}
+
+.brand {
+    font-family: var(--display, Georgia, serif);
+    font-size: 1.5rem;
+    line-height: 1;
+}
+
+.nav {
+    display: flex;
+    gap: 1.75rem;
+    font-size: 0.95rem;
+    color: var(--soft);
+}
+
+.nav a {
+    transition: color 0.2s ease;
+}
+
+.nav a:hover {
+    color: var(--accent);
 }
 
 .hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.75fr);
+    align-items: center;
+    gap: clamp(2rem, 5vw, 5rem);
+    max-width: 1160px;
+    margin: 0 auto;
+    padding: clamp(2.5rem, 8vw, 6rem) var(--pad) clamp(3rem, 9vw, 7rem);
+}
+
+.eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 1.5rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--soft);
+}
+
+.dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+}
+
+.title {
+    font-family: var(--display, Georgia, serif);
+    font-size: clamp(3.25rem, 9vw, 7rem);
+    font-weight: 400;
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+}
+
+.intro {
+    max-width: 34rem;
+    margin-top: 1.75rem;
+    font-size: 1.15rem;
+    color: var(--soft);
+}
+
+.actions {
     display: flex;
-    flex-direction: column;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 2.25rem;
+}
+
+.buttonPrimary,
+.buttonGhost {
+    display: inline-flex;
     align-items: center;
     justify-content: center;
-    text-align: center;
+    padding: 0.9rem 1.6rem;
+    border-radius: 999px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
 }
 
-.hero h1 {
-    color: var(--primary);
+.buttonPrimary {
+    background: var(--accent);
+    color: #fff;
 }
 
-.button {
-    background: var(--primary);
-    color: var(--bg);
+.buttonPrimary:hover {
+    background: color-mix(in srgb, var(--accent) 85%, #000);
 }
-.photo,
-.photoPlaceholder {
-    width: 150px;
-    height: 150px;
-    border-radius: 50%;
+
+.buttonGhost {
+    border: 1px solid var(--line);
+    color: var(--ink);
+}
+
+.buttonGhost:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+.photoCard {
+    aspect-ratio: 4 / 5;
+    border-radius: 28px;
+    overflow: hidden;
+    background: var(--card);
+    border: 1px solid var(--line);
+}
+
+.photo {
+    width: 100%;
+    height: 100%;
     object-fit: cover;
 }
+
 .photoPlaceholder {
-    background: var(--primary);
-    opacity: 0.25;
+    display: grid;
+    place-items: center;
+    width: 100%;
+    height: 100%;
+    font-family: var(--display, Georgia, serif);
+    font-size: clamp(4rem, 10vw, 7rem);
+    color: var(--accent);
+    background:
+        radial-gradient(circle at 30% 20%, color-mix(in srgb, var(--accent) 18%, transparent), transparent 60%),
+        var(--card);
 }
-.page p { color: var(--text); font-size: 1rem; margin: 0 0 1rem; }
+
+.about,
+.contact {
+    display: grid;
+    grid-template-columns: 4rem minmax(0, 1fr) minmax(0, 1.4fr);
+    gap: 1.5rem clamp(1.5rem, 4vw, 4rem);
+    max-width: 1160px;
+    margin: 0 auto;
+    padding: clamp(3rem, 8vw, 6rem) var(--pad);
+    border-top: 1px solid var(--line);
+}
+
+.sectionLabel {
+    padding-top: 0.6rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--accent);
+}
+
+.sectionTitle,
+.contactTitle {
+    font-family: var(--display, Georgia, serif);
+    font-size: clamp(2.25rem, 5vw, 3.5rem);
+    font-weight: 400;
+    line-height: 1.05;
+}
+
+.aboutText {
+    font-size: 1.1rem;
+    color: var(--soft);
+}
+
+.contact {
+    grid-template-columns: 4rem minmax(0, 1fr);
+}
+
+.contactTitle {
+    font-size: clamp(2.75rem, 8vw, 5.5rem);
+}
+
+.contactText,
+.email,
+.socials {
+    grid-column: 2;
+}
+
+.contactText {
+    max-width: 36rem;
+    font-size: 1.1rem;
+    color: var(--soft);
+}
+
+.email {
+    justify-self: start;
+    font-family: var(--display, Georgia, serif);
+    font-size: clamp(1.5rem, 4vw, 2.25rem);
+    border-bottom: 1px solid var(--accent);
+    transition: color 0.2s ease;
+}
+
+.email:hover {
+    color: var(--accent);
+}
+
+.socials {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 0.6rem;
+    margin-top: 0.5rem;
+    list-style: none;
+}
+
+.socials a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.55rem 1.1rem;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    font-size: 0.9rem;
+    transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+.socials a:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+.footer {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    max-width: 1160px;
+    margin: 0 auto;
+    padding: 1.75rem var(--pad) 2.25rem;
+    border-top: 1px solid var(--line);
+    font-size: 0.85rem;
+    color: var(--soft);
+}
+
+.footer a:hover {
+    color: var(--accent);
+}
+
+@media (max-width: 760px) {
+    .nav {
+        display: none;
+    }
+
+    .hero {
+        grid-template-columns: 1fr;
+    }
+
+    .photoCard {
+        order: -1;
+        max-width: 280px;
+    }
+
+    .about,
+    .contact {
+        grid-template-columns: 1fr;
+    }
+
+    .contactText,
+    .email,
+    .socials {
+        grid-column: auto;
+    }
+
+    .sectionLabel {
+        padding-top: 0;
+    }
+}
