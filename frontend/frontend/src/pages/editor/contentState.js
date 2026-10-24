@@ -26,3 +26,20 @@ export function contentReducer(state, action) {
             throw new Error(`Unknown action type: ${action.type}`);
     }
 }
+function isPlainObject(value) {
+    return value !== null && typeof value === 'object' && !Array.isArray(value);
+}
+export function withDefaults(defaults, saved) {
+    if(saved === undefined) {
+        return defaults;
+    }
+    if (!isPlainObject(defaults) || !isPlainObject(saved)) {
+        return saved;
+    }
+
+      const result = { ...defaults };
+  for (const key of Object.keys(saved)) {
+      result[key] =  withDefaults(defaults[key], saved[key]);
+  }
+  return result;
+}
