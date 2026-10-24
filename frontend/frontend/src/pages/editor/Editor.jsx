@@ -1,7 +1,7 @@
 import { useEffect, useReducer, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { getTemplate } from '../templates/registry';
-import { contentReducer } from './contentState';
+
+import { contentReducer, withDefaults } from './contentState';
 import PreviewFrame from './PreviewFrame';
 import PageEdit from './PageEdit';
 import { GOOGLE_FONTS_URL } from '../../assets/shared/fonts';
@@ -13,10 +13,13 @@ const DEVICES = [
     { key: 'mobile', label: 'Mobile', icon: 'fa-solid fa-mobile-screen' },
 ];
 
-export default function Editor() {
-    const template = getTemplate('portfolio_minimal');
+export default function Editor({ template , page }) {
     const [device, setDevice] = useState('desktop');
-    const [content, dispatch] = useReducer(contentReducer, template.defaultContent);
+    const [content, dispatch] = useReducer(
+    contentReducer,
+    page.content,
+    (saved) => withDefaults(template.defaultContent, saved)
+);
 
     const Template = template.component;
 
