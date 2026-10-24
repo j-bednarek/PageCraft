@@ -7,6 +7,7 @@ import ProtectedRoute from './assets/components/ProtectedRoute'
 import Account from './pages/account/Account'
 import portfolioMinimal from './pages/templates/portfolioMinimal/definition';
 import Editor from './pages/editor/Editor';
+import EditorPage from './pages/editor/EditorPage';
 import './App.css'
 
 function App() {
@@ -25,7 +26,14 @@ function App() {
               }
             />
           </Route>
-
+          <Route path="/dev/editor/:id" element={<EditorPage />} /><Route
+  path="/editor/:id"
+  element={
+    <ProtectedRoute>
+      <EditorPage />
+    </ProtectedRoute>
+  }
+/>
           <Route path="/dev/editor" element={<Editor />} />
           <Route
             path="/dev/template"
