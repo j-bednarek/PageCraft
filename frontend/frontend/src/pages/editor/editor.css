@@ -577,3 +577,38 @@
 .ed-message a {
   color: #b15f2c;
 }
+
+.ed-title-input {
+  min-width: 0;
+  width: 16rem;
+  padding: 0.2rem 0.4rem;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--ink);
+}
+
+.ed-title-input:hover {
+  border-color: var(--line);
+}
+
+.ed-title-input:focus {
+  outline: none;
+  border-color: var(--copper);
+  background: #fff;
+}
+
+.ed-save {
+  font-size: 0.8rem;
+  color: var(--graphite);
+  white-space: nowrap;
+}
+
+.ed-save-saving,
+.ed-save-unsaved {
+  color: var(--copper-d);
+}
+
+.ed-save-error {
+  color: #b42318;
+}

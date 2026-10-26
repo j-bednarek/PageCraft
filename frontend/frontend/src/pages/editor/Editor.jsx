@@ -1,6 +1,6 @@
 import { useEffect, useReducer, useState } from 'react';
 import { Link } from 'react-router-dom';
-
+import useAutosave from './useAutosave';
 import { contentReducer, withDefaults } from './contentState';
 import PreviewFrame from './PreviewFrame';
 import PageEdit from './PageEdit';
@@ -12,7 +12,12 @@ const DEVICES = [
     { key: 'desktop', label: 'Desktop', icon: 'fa-solid fa-desktop' },
     { key: 'mobile', label: 'Mobile', icon: 'fa-solid fa-mobile-screen' },
 ];
-
+const SAVE_LABELS = {
+    saved: 'Saved',
+    unsaved: 'Unsaved changes',
+    saving: 'Saving…',
+    error: 'Not saved',
+};
 export default function Editor({ template , page }) {
     const [device, setDevice] = useState('desktop');
     const [content, dispatch] = useReducer(
@@ -20,9 +25,12 @@ export default function Editor({ template , page }) {
     page.content,
     (saved) => withDefaults(template.defaultContent, saved)
 );
-
+    const [title, setTitle] = useState(page.title || 'Untitled page');
     const Template = template.component;
-
+const saveStatus = useAutosave(page.id, {
+    title: title.trim() || 'Untitled page',
+    content,
+});
     useEffect(() => {
         if (document.getElementById('editor-fonts')) return;
         const link = document.createElement('link');
@@ -42,7 +50,15 @@ export default function Editor({ template , page }) {
                     </Link>
                     <span className="ed-divider" aria-hidden="true"></span>
                     <div className="ed-doc">
-                        <span className="ed-doc-name">{template.name}</span>
+                        <input
+                            className="ed-doc-name ed-title-input"
+                            value={title}
+                            maxLength={100}
+                            aria-label="Page title"
+                            onChange={(e) => setTitle(e.target.value)}
+                        />
+<span className="ed-badge">{page.status ? 'Published' : 'Draft'}</span>
+<span className={`ed-save ed-save-${saveStatus}`}>{SAVE_LABELS[saveStatus]}</span>
                         <span className="ed-badge">Draft</span>
                     </div>
                 </div>
