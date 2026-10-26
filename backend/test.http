@@ -46,4 +46,4 @@ GET {{api}}/pages/999999
 GET {{api}}/public/pages/moje-portfolio-2026
 
 ### Wylogowanie
-POST {{api}}/auth/logout
+POST {{api}}/auth/logout 
