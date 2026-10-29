@@ -612,26 +612,3 @@
 .ed-save-error {
   color: #b42318;
 }
-
-.acc-section-head-row {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 1rem;
-}
-
-.acc-row-actions {
-  display: flex;
-  gap: 0.5rem;
-}
-
-.acc-row-actions .acc-btn {
-  padding: 0.5rem 0.9rem;
-  font-size: 0.85rem;
-}
-
-@media (max-width: 600px) {
-  .acc-row-actions {
-    grid-column: 1 / -1;
-  }
-}

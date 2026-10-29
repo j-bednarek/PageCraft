@@ -25,7 +25,7 @@ export default function PagesTab({ usage }) {
     const [pages, setPages] = useState(null);
     const [error, setError] = useState('');
     const [isCreating, setIsCreating] = useState(false);
-    
+
     useEffect(() => {
         let ignore = false;
         api.get('/pages/my-projects')
@@ -33,40 +33,43 @@ export default function PagesTab({ usage }) {
             .catch((err) => { if (!ignore) setError(getErrorMessage(err)); });
         return () => { ignore = true; };
     }, []);
-    async function createPage() {
-    setIsCreating(true);
-    setError('');
-    try {
-        const response = await api.post('/pages', { templateKey: 'portfolio_minimal' });
-        navigate(`/editor/${response.data.id}`);
-    } catch (err) {
-        setError(getErrorMessage(err));
-        setIsCreating(false);
-    }
-}
 
-async function deletePage(page) {
-    if (!window.confirm(`Delete "${page.title}"? This cannot be undone.`)) {
-        return;
+    async function createPage() {
+        setIsCreating(true);
+        setError('');
+        try {
+            const response = await api.post('/pages', { templateKey: 'portfolio_minimal' });
+            navigate(`/editor/${response.data.page.id}`);
+        } catch (err) {
+            setError(getErrorMessage(err));
+            setIsCreating(false);
+        }
     }
-    try {
-        await api.delete(`/pages/${page.id}`);
-        setPages((current) => current.filter((p) => p.id !== page.id));
-    } catch (err) {
-        setError(getErrorMessage(err));
+
+    async function deletePage(page) {
+        if (!window.confirm(`Delete "${page.title}"? This cannot be undone.`)) {
+            return;
+        }
+        try {
+            await api.delete(`/pages/${page.id}`);
+            setPages((current) => current.filter((p) => p.id !== page.id));
+        } catch (err) {
+            setError(getErrorMessage(err));
+        }
     }
-}
-const published = pages ? pages.filter((p) => p.status).length : usage.published;
-const drafts = pages ? pages.filter((p) => !p.status).length : usage.drafts;
+
+    const published = pages ? pages.filter((p) => p.status).length : usage.published;
+    const drafts = pages ? pages.filter((p) => !p.status).length : usage.drafts;
+
     return (
         <div className="acc-stack">
-            <div className="acc-section-head">
-                <div className="acc-section-head acc-section-head-row">
-                <h2>My pages</h2>
-                <p className="acc-subtle">Everything you have built, published or not.</p>
+            <div className="acc-section-head acc-section-head-row">
+                <div>
+                    <h2>My pages</h2>
+                    <p className="acc-subtle">Everything you have built, published or not.</p>
                 </div>
                 <button type="button" className="cta-button acc-btn" onClick={createPage} disabled={isCreating}>
-                {isCreating ? 'Creating…' : 'New page'}
+                    {isCreating ? 'Creating…' : 'New page'}
                 </button>
             </div>
 
@@ -95,8 +98,8 @@ const drafts = pages ? pages.filter((p) => !p.status).length : usage.drafts;
                     </p>
                     <div className="acc-actions">
                         <button type="button" className="cta-button acc-btn" onClick={createPage} disabled={isCreating}>
-    {isCreating ? 'Creating…' : 'New page'}
-</button>
+                            {isCreating ? 'Creating…' : 'Start building'}
+                        </button>
                         <Link to="/templates" className="acc-btn acc-btn-secondary">Browse templates</Link>
                     </div>
                 </div>
@@ -124,11 +127,11 @@ const drafts = pages ? pages.filter((p) => !p.status).length : usage.drafts;
                                 Updated {formatDate(page.updated_at)}
                             </span>
                             <div className="acc-row-actions">
-    <Link to={`/editor/${page.id}`} className="acc-btn acc-btn-secondary">Edit</Link>
-    <button type="button" className="acc-btn acc-btn-danger" onClick={() => deletePage(page)}>
-        Delete
-    </button>
-</div>
+                                <Link to={`/editor/${page.id}`} className="acc-btn acc-btn-secondary">Edit</Link>
+                                <button type="button" className="acc-btn acc-btn-danger" onClick={() => deletePage(page)}>
+                                    Delete
+                                </button>
+                            </div>
                         </div>
                     ))}
                 </div>

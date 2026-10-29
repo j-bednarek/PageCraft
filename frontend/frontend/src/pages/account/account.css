@@ -360,7 +360,7 @@
 }
 .acc-list-row {
   display: grid;
-  grid-template-columns: 48px minmax(0, 1fr) auto auto;
+  grid-template-columns: 48px minmax(0, 1fr) auto auto auto;
   align-items: center;
   gap: 1rem;
   padding: 0.85rem 1rem;
@@ -600,5 +600,28 @@
   .acc-current-plan-price {
     align-items: flex-start;
     text-align: left;
+  }
+}
+
+.acc-section-head-row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.acc-row-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.acc-row-actions .acc-btn {
+  padding: 0.5rem 0.9rem;
+  font-size: 0.85rem;
+}
+
+@media (max-width: 600px) {
+  .acc-row-actions {
+    grid-column: 1 / -1;
   }
 }
