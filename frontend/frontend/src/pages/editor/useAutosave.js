@@ -25,9 +25,8 @@ export default function useAutosave(pageId, data) {
                 await api.patch(`/pages/${pageId}`, JSON.parse(json));
                 setSavedJson(json);
                 setHasError(false);
-                
             } catch {
-               setHasError(true);
+                setHasError(true);
             } finally {
                 setIsSaving(false);
             }
@@ -39,27 +38,25 @@ export default function useAutosave(pageId, data) {
     useEffect(() => {
         return () => {
             if (pendingRef.current) {
-                api.patch(`/pages/${pageId}`, JSON.parse(pendingRef.current)).catch(() => {
-                    // Handle error if needed
-                });
+                api.patch(`/pages/${pageId}`, JSON.parse(pendingRef.current)).catch(() => {});
             }
         };
     }, [pageId]);
 
     useEffect(() => {
-    if (!isDirty) return;
+        if (!isDirty) return;
 
-    function warnBeforeLeaving(event) {
-        event.preventDefault();
-        event.returnValue = '';
-    }
+        function warnBeforeLeaving(event) {
+            event.preventDefault();
+            event.returnValue = '';
+        }
 
-    window.addEventListener('beforeunload', warnBeforeLeaving);
-    return () => window.removeEventListener('beforeunload', warnBeforeLeaving);
-}, [isDirty]);
+        window.addEventListener('beforeunload', warnBeforeLeaving);
+        return () => window.removeEventListener('beforeunload', warnBeforeLeaving);
+    }, [isDirty]);
 
-  if (hasError) return 'error';
-  if (isSaving) return 'saving';
-  if (isDirty) return 'dirty';
-  return 'idle';
+    if (hasError) return 'error';
+    if (isSaving) return 'saving';
+    if (isDirty) return 'unsaved';
+    return 'saved';
 }

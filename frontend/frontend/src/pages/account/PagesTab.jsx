@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import api from '../../api/client';
 import { getErrorMessage } from '../../api/errors';
 import { formatDate } from './format';
@@ -21,8 +21,10 @@ function UsageCard({ label, used, limit, hint }) {
 }
 
 export default function PagesTab({ usage }) {
+    const navigate = useNavigate();
     const [pages, setPages] = useState(null);
     const [error, setError] = useState('');
+    const [isCreating, setIsCreating] = useState(false);
 
     useEffect(() => {
         let ignore = false;
@@ -32,21 +34,53 @@ export default function PagesTab({ usage }) {
         return () => { ignore = true; };
     }, []);
 
+    async function createPage() {
+        setIsCreating(true);
+        setError('');
+        try {
+            const response = await api.post('/pages', { templateKey: 'portfolio_minimal' });
+            navigate(`/editor/${response.data.page.id}`);
+        } catch (err) {
+            setError(getErrorMessage(err));
+            setIsCreating(false);
+        }
+    }
+
+    async function deletePage(page) {
+        if (!window.confirm(`Delete "${page.title}"? This cannot be undone.`)) {
+            return;
+        }
+        try {
+            await api.delete(`/pages/${page.id}`);
+            setPages((current) => current.filter((p) => p.id !== page.id));
+        } catch (err) {
+            setError(getErrorMessage(err));
+        }
+    }
+
+    const published = pages ? pages.filter((p) => p.status).length : usage.published;
+    const drafts = pages ? pages.filter((p) => !p.status).length : usage.drafts;
+
     return (
         <div className="acc-stack">
-            <div className="acc-section-head">
-                <h2>My pages</h2>
-                <p className="acc-subtle">Everything you have built, published or not.</p>
+            <div className="acc-section-head acc-section-head-row">
+                <div>
+                    <h2>My pages</h2>
+                    <p className="acc-subtle">Everything you have built, published or not.</p>
+                </div>
+                <button type="button" className="cta-button acc-btn" onClick={createPage} disabled={isCreating}>
+                    {isCreating ? 'Creating…' : 'New page'}
+                </button>
             </div>
 
             <div className="acc-usage-grid">
                 <UsageCard
                     label="Published pages"
-                    used={usage.published}
+                    used={published}
                     limit={usage.publishedLimit}
                     hint={usage.publishedLimit === 0 ? 'Upgrade your plan to publish a page.' : null}
                 />
-                <UsageCard label="Drafts" used={usage.drafts} limit={usage.draftLimit} />
+                <UsageCard label="Drafts" used={drafts} limit={usage.draftLimit} />
             </div>
 
             {error && <div className="acc-message acc-message-error">{error}</div>}
@@ -63,7 +97,9 @@ export default function PagesTab({ usage }) {
                         Pick a template and have your first one-page site ready in a few minutes.
                     </p>
                     <div className="acc-actions">
-                        <Link to="/editor" className="cta-button acc-btn">Start building</Link>
+                        <button type="button" className="cta-button acc-btn" onClick={createPage} disabled={isCreating}>
+                            {isCreating ? 'Creating…' : 'Start building'}
+                        </button>
                         <Link to="/templates" className="acc-btn acc-btn-secondary">Browse templates</Link>
                     </div>
                 </div>
@@ -79,7 +115,7 @@ export default function PagesTab({ usage }) {
                                     : <i className="fa-regular fa-file"></i>}
                             </div>
                             <div className="acc-list-main">
-                                <strong>{page.templates?.name || 'Untitled page'}</strong>
+                                <strong>{page.title}</strong>
                                 <span className="acc-subtle acc-mono">
                                     {page.slug ? `pagecraft.pl/${page.slug}` : 'No address yet'}
                                 </span>
@@ -90,6 +126,12 @@ export default function PagesTab({ usage }) {
                             <span className="acc-subtle acc-list-date">
                                 Updated {formatDate(page.updated_at)}
                             </span>
+                            <div className="acc-row-actions">
+                                <Link to={`/editor/${page.id}`} className="acc-btn acc-btn-secondary">Edit</Link>
+                                <button type="button" className="acc-btn acc-btn-danger" onClick={() => deletePage(page)}>
+                                    Delete
+                                </button>
+                            </div>
                         </div>
                     ))}
                 </div>

@@ -5,7 +5,6 @@ import AppLayout from './assets/components/AppLayout'
 import { AuthProvider } from './context/AuthContext'
 import ProtectedRoute from './assets/components/ProtectedRoute'
 import Account from './pages/account/Account'
-import portfolioMinimal from './pages/templates/portfolioMinimal/definition'
 import EditorPage from './pages/editor/EditorPage'
 
 import './App.css'
@@ -34,11 +33,6 @@ function App() {
                 <EditorPage />
               </ProtectedRoute>
             }
-          />
-
-          <Route
-            path="/dev/template"
-            element={<portfolioMinimal.component content={portfolioMinimal.defaultContent} />}
           />
         </Routes>
       </BrowserRouter>
