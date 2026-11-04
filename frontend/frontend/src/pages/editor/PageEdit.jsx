@@ -25,6 +25,7 @@ export default function PageEdit({ fields, content, dispatch }) {
                                         key={field.path}
                                         label={field.label}
                                         type={field.type}
+                                        field={field}
                                         value={getIn(content, field.path)}
                                         onChange={(value) =>
                                             dispatch({ type: 'set', path: field.path, value })

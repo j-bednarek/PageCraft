@@ -1,0 +1,329 @@
+.page,
+.page * {
+    box-sizing: border-box;
+}
+
+.page :where(h1, h2, h3, p, ul, li, figure) {
+    margin: 0;
+    padding: 0;
+    width: auto;
+    font-size: inherit;
+    font-weight: 400;
+    line-height: inherit;
+    color: inherit;
+    list-style: none;
+}
+
+.page :where(a) {
+    color: inherit;
+    text-decoration: none;
+}
+
+.page a:hover {
+    text-decoration: none;
+}
+
+.page :where(img) {
+    display: block;
+    max-width: 100%;
+}
+
+.page {
+    --pad: clamp(1.25rem, 5vw, 4rem);
+    --line: color-mix(in srgb, var(--ink) 14%, transparent);
+    --soft: color-mix(in srgb, var(--ink) 65%, var(--bg));
+    --card: color-mix(in srgb, var(--accent) 6%, var(--bg));
+
+    min-height: 100vh;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font, system-ui, sans-serif);
+    font-size: 17px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+}
+
+.hero {
+    display: flex;
+    flex-direction: column;
+    min-height: 78vh;
+    background:
+        radial-gradient(circle at 20% 15%, color-mix(in srgb, var(--accent) 35%, transparent), transparent 55%),
+        radial-gradient(circle at 85% 80%, color-mix(in srgb, var(--accent) 25%, transparent), transparent 50%),
+        color-mix(in srgb, var(--accent) 88%, #000);
+    color: #fff;
+}
+
+.heroWithImage {
+    background-size: cover;
+    background-position: center;
+    box-shadow: inset 0 0 0 100vmax rgb(0 0 0 / 0.45);
+}
+
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1.5rem;
+    width: 100%;
+    max-width: 1160px;
+    margin: 0 auto;
+    padding: 1.5rem var(--pad);
+}
+
+.brand {
+    font-family: var(--display, Georgia, serif);
+    font-size: 1.35rem;
+    font-weight: 600;
+}
+
+.nav {
+    display: flex;
+    gap: 1.75rem;
+    font-size: 0.95rem;
+    opacity: 0.85;
+}
+
+.nav a:hover {
+    opacity: 1;
+}
+
+.heroInner {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem var(--pad) 5rem;
+    text-align: center;
+}
+
+.tagline {
+    margin-bottom: 1rem;
+    font-size: 0.95rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    opacity: 0.85;
+}
+
+.title {
+    max-width: 14ch;
+    font-family: var(--display, Georgia, serif);
+    font-size: clamp(3rem, 9vw, 6rem);
+    font-weight: 600;
+    line-height: 1;
+}
+
+.button {
+    margin-top: 2.25rem;
+    padding: 0.95rem 1.8rem;
+    border-radius: 999px;
+    background: #fff;
+    color: var(--accent);
+    font-weight: 600;
+    transition: transform 0.2s ease;
+}
+
+.button:hover {
+    transform: translateY(-2px);
+}
+
+.sectionTitle {
+    margin-bottom: 1.5rem;
+    font-family: var(--display, Georgia, serif);
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 600;
+    line-height: 1.1;
+    text-align: center;
+}
+
+.about {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: clamp(3rem, 8vw, 5.5rem) var(--pad) 1rem;
+    text-align: center;
+}
+
+.aboutText {
+    font-size: 1.15rem;
+    color: var(--soft);
+}
+
+.menuSection {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: clamp(3rem, 7vw, 5rem) var(--pad);
+}
+
+.menu {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.5rem 3rem;
+}
+
+.dishRow {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+}
+
+.dishName {
+    font-family: var(--display, Georgia, serif);
+    font-size: 1.15rem;
+    font-weight: 600;
+}
+
+.dots {
+    flex: 1;
+    min-width: 1rem;
+    border-bottom: 1px dotted var(--line);
+    transform: translateY(-0.3em);
+}
+
+.dishPrice {
+    font-weight: 600;
+    color: var(--accent);
+    white-space: nowrap;
+}
+
+.dishText {
+    margin-top: 0.15rem;
+    font-size: 0.95rem;
+    color: var(--soft);
+}
+
+.note {
+    margin-top: 2.5rem;
+    font-size: 0.95rem;
+    font-style: italic;
+    color: var(--soft);
+    text-align: center;
+}
+
+.gallerySection {
+    max-width: 1160px;
+    margin: 0 auto;
+    padding: 0 var(--pad) clamp(3rem, 7vw, 5rem);
+}
+
+.gallery {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+.tile {
+    aspect-ratio: 4 / 3;
+    border-radius: 18px;
+    overflow: hidden;
+    background: var(--card);
+}
+
+.tile img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.tilePlaceholder {
+    display: grid;
+    place-items: center;
+    width: 100%;
+    height: 100%;
+    font-family: var(--display, Georgia, serif);
+    font-size: 1.15rem;
+    color: var(--accent);
+    background: linear-gradient(145deg, color-mix(in srgb, var(--accent) 16%, var(--bg)), var(--card));
+}
+
+.info {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.25rem;
+    max-width: 1160px;
+    margin: 0 auto;
+    padding: 0 var(--pad) clamp(3rem, 7vw, 5rem);
+}
+
+.infoCard {
+    padding: clamp(1.5rem, 4vw, 2.5rem);
+    border-radius: 22px;
+    background: var(--card);
+}
+
+.cardTitle {
+    margin-bottom: 1.25rem;
+    font-family: var(--display, Georgia, serif);
+    font-size: 1.6rem;
+    font-weight: 600;
+}
+
+.hours li {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.55rem 0;
+    border-bottom: 1px solid var(--line);
+}
+
+.hours li:last-child {
+    border-bottom: 0;
+}
+
+.address {
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
+.contactLine {
+    margin-top: 0.35rem;
+    color: var(--soft);
+}
+
+.contactLine a:hover {
+    color: var(--accent);
+}
+
+.links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-top: 1.5rem;
+}
+
+.linkButton {
+    padding: 0.6rem 1.1rem;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+.linkButton:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+.footer {
+    padding: 1.5rem var(--pad) 2.5rem;
+    font-size: 0.85rem;
+    color: var(--soft);
+    text-align: center;
+}
+
+@media (max-width: 760px) {
+    .nav {
+        display: none;
+    }
+
+    .menu,
+    .info {
+        grid-template-columns: 1fr;
+    }
+
+    .gallery {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}

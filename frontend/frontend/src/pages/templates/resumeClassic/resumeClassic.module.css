@@ -1,0 +1,229 @@
+.page,
+.page * {
+    box-sizing: border-box;
+}
+
+.page :where(h1, h2, h3, p, ul, li) {
+    margin: 0;
+    padding: 0;
+    width: auto;
+    font-size: inherit;
+    font-weight: 400;
+    line-height: inherit;
+    color: inherit;
+    list-style: none;
+}
+
+.page :where(a) {
+    color: inherit;
+    text-decoration: none;
+}
+
+.page a:hover {
+    text-decoration: none;
+}
+
+.page :where(img) {
+    display: block;
+    max-width: 100%;
+}
+
+.page {
+    --pad: clamp(1rem, 4vw, 3rem);
+    --line: color-mix(in srgb, var(--ink) 12%, transparent);
+    --soft: color-mix(in srgb, var(--ink) 65%, var(--bg));
+    --tint: color-mix(in srgb, var(--accent) 7%, var(--bg));
+
+    min-height: 100vh;
+    padding: clamp(1rem, 4vw, 3rem) var(--pad);
+    background: color-mix(in srgb, var(--ink) 4%, var(--bg));
+    color: var(--ink);
+    font-family: var(--font, system-ui, sans-serif);
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+}
+
+.sheet {
+    max-width: 980px;
+    margin: 0 auto;
+    border-radius: 20px;
+    overflow: hidden;
+    background: var(--bg);
+    box-shadow: 0 10px 40px color-mix(in srgb, var(--ink) 10%, transparent);
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    gap: 1.75rem;
+    padding: clamp(1.75rem, 4vw, 2.75rem);
+    background: var(--accent);
+    color: #fff;
+}
+
+.photo {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 112px;
+    height: 112px;
+    border: 3px solid color-mix(in srgb, #fff 60%, transparent);
+    border-radius: 50%;
+    overflow: hidden;
+    background: color-mix(in srgb, #fff 18%, transparent);
+    font-family: var(--display, system-ui, sans-serif);
+    font-size: 2.25rem;
+    font-weight: 700;
+}
+
+.photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.name {
+    font-family: var(--display, system-ui, sans-serif);
+    font-size: clamp(2rem, 5vw, 2.9rem);
+    font-weight: 700;
+    line-height: 1.1;
+}
+
+.role {
+    margin-top: 0.35rem;
+    font-size: 1.1rem;
+    opacity: 0.85;
+}
+
+.columns {
+    display: grid;
+    grid-template-columns: 290px minmax(0, 1fr);
+}
+
+.sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    padding: clamp(1.5rem, 4vw, 2.25rem);
+    background: var(--tint);
+}
+
+.sideTitle {
+    margin-bottom: 0.75rem;
+    font-family: var(--display, system-ui, sans-serif);
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+}
+
+.contact {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    font-size: 0.95rem;
+    overflow-wrap: anywhere;
+}
+
+.contact a:hover {
+    color: var(--accent);
+}
+
+.skills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+}
+
+.skills li {
+    padding: 0.3rem 0.7rem;
+    border-radius: 8px;
+    background: var(--bg);
+    font-size: 0.9rem;
+}
+
+.main {
+    display: flex;
+    flex-direction: column;
+    gap: 2.25rem;
+    padding: clamp(1.5rem, 4vw, 2.5rem);
+}
+
+.summary {
+    font-size: 1.05rem;
+    color: var(--soft);
+}
+
+.blockTitle {
+    margin-bottom: 1.25rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--accent);
+    font-family: var(--display, system-ui, sans-serif);
+    font-size: 1.35rem;
+    font-weight: 700;
+}
+
+.entries {
+    display: flex;
+    flex-direction: column;
+    gap: 1.4rem;
+}
+
+.entryHead {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+}
+
+.entryTitle {
+    font-size: 1.05rem;
+    font-weight: 600;
+}
+
+.period {
+    flex-shrink: 0;
+    font-size: 0.9rem;
+    color: var(--accent);
+    white-space: nowrap;
+}
+
+.entryPlace {
+    margin-top: 0.1rem;
+    font-size: 0.95rem;
+    color: var(--soft);
+}
+
+.entryText {
+    margin-top: 0.4rem;
+}
+
+@media (max-width: 760px) {
+    .header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .columns {
+        grid-template-columns: 1fr;
+    }
+
+    .entryHead {
+        flex-direction: column;
+        gap: 0;
+    }
+}
+
+@media print {
+    .page {
+        padding: 0;
+        background: #fff;
+    }
+
+    .sheet {
+        border-radius: 0;
+        box-shadow: none;
+    }
+}

@@ -5,6 +5,7 @@ import FontField from './FontField';
 import StyledTextField from './StyledTextField';
 import ImageField from './ImageField';
 import LinksField from './LinksField';
+import ListField from './ListField';
 
 export default {
     text: TextField,
@@ -16,4 +17,5 @@ export default {
     styledText: StyledTextField,
     image: ImageField,
     links: LinksField,
+    list: ListField,
 };

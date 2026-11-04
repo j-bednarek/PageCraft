@@ -1,0 +1,348 @@
+.page,
+.page * {
+    box-sizing: border-box;
+}
+
+.page :where(h1, h2, h3, p, ul, li) {
+    margin: 0;
+    padding: 0;
+    width: auto;
+    font-size: inherit;
+    font-weight: 400;
+    line-height: inherit;
+    color: inherit;
+    list-style: none;
+}
+
+.page :where(a) {
+    color: inherit;
+    text-decoration: none;
+}
+
+.page a:hover {
+    text-decoration: none;
+}
+
+.page :where(img) {
+    display: block;
+    max-width: 100%;
+}
+
+.page {
+    --pad: clamp(1.25rem, 5vw, 4rem);
+    --line: color-mix(in srgb, var(--ink) 12%, transparent);
+    --soft: color-mix(in srgb, var(--ink) 65%, var(--bg));
+    --tint: color-mix(in srgb, var(--accent) 8%, var(--bg));
+
+    min-height: 100vh;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font, system-ui, sans-serif);
+    font-size: 17px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+}
+
+.topbar {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    max-width: 1160px;
+    margin: 0 auto;
+    padding: 1.25rem var(--pad);
+}
+
+.brand {
+    margin-right: auto;
+    font-family: var(--display, system-ui, sans-serif);
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+
+.nav {
+    display: flex;
+    gap: 1.5rem;
+    font-size: 0.95rem;
+    color: var(--soft);
+}
+
+.nav a:hover {
+    color: var(--accent);
+}
+
+.topbarPhone {
+    padding: 0.55rem 1rem;
+    border-radius: 10px;
+    background: var(--tint);
+    color: var(--accent);
+    font-size: 0.95rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
+    align-items: center;
+    gap: clamp(2rem, 5vw, 4rem);
+    max-width: 1160px;
+    margin: 0 auto;
+    padding: clamp(2rem, 6vw, 4.5rem) var(--pad) clamp(3rem, 7vw, 5rem);
+}
+
+.tagline {
+    display: inline-block;
+    margin-bottom: 1.25rem;
+    padding: 0.35rem 0.85rem;
+    border-radius: 999px;
+    background: var(--tint);
+    color: var(--accent);
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.title {
+    font-family: var(--display, system-ui, sans-serif);
+    font-size: clamp(2.6rem, 6vw, 4.25rem);
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+}
+
+.intro {
+    max-width: 34rem;
+    margin-top: 1.25rem;
+    font-size: 1.1rem;
+    color: var(--soft);
+}
+
+.actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 2rem;
+}
+
+.buttonPrimary,
+.buttonGhost,
+.buttonLight {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.85rem 1.4rem;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.buttonPrimary {
+    background: var(--accent);
+    color: #fff;
+}
+
+.buttonPrimary:hover {
+    background: color-mix(in srgb, var(--accent) 85%, #000);
+}
+
+.buttonGhost {
+    border: 1px solid var(--line);
+}
+
+.buttonGhost:hover {
+    border-color: var(--accent);
+}
+
+.photo {
+    aspect-ratio: 4 / 5;
+    border-radius: 24px;
+    overflow: hidden;
+    background: var(--tint);
+}
+
+.photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.photoPlaceholder {
+    display: grid;
+    place-items: center;
+    width: 100%;
+    height: 100%;
+    font-family: var(--display, system-ui, sans-serif);
+    font-size: clamp(3.5rem, 8vw, 5.5rem);
+    font-weight: 700;
+    color: var(--accent);
+    background: linear-gradient(160deg, color-mix(in srgb, var(--accent) 22%, var(--bg)), var(--tint));
+}
+
+.section {
+    max-width: 1160px;
+    margin: 0 auto;
+    padding: clamp(2.5rem, 6vw, 4.5rem) var(--pad);
+}
+
+.sectionTitle {
+    margin-bottom: 1.75rem;
+    font-family: var(--display, system-ui, sans-serif);
+    font-size: clamp(1.75rem, 4vw, 2.5rem);
+    font-weight: 700;
+    line-height: 1.15;
+}
+
+.services {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+.service {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1.25rem 1.4rem;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+}
+
+.serviceName {
+    font-size: 1.05rem;
+    font-weight: 600;
+}
+
+.serviceText {
+    margin-top: 0.25rem;
+    font-size: 0.95rem;
+    color: var(--soft);
+}
+
+.price {
+    flex-shrink: 0;
+    font-weight: 700;
+    color: var(--accent);
+    white-space: nowrap;
+}
+
+.split {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
+    gap: clamp(2rem, 5vw, 4rem);
+    align-items: start;
+}
+
+.aboutText {
+    font-size: 1.05rem;
+    color: var(--soft);
+}
+
+.hoursCard {
+    padding: 1.75rem;
+    border-radius: 20px;
+    background: var(--tint);
+}
+
+.cardTitle {
+    margin-bottom: 1rem;
+    font-family: var(--display, system-ui, sans-serif);
+    font-size: 1.3rem;
+    font-weight: 700;
+}
+
+.hours li {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.6rem 0;
+    border-bottom: 1px solid var(--line);
+}
+
+.hours li:last-child {
+    border-bottom: 0;
+}
+
+.hours strong {
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.contactCard {
+    padding: clamp(1.75rem, 5vw, 3rem);
+    border-radius: 24px;
+    background: var(--accent);
+    color: #fff;
+}
+
+.contactTitle {
+    margin-bottom: 1.5rem;
+    font-family: var(--display, system-ui, sans-serif);
+    font-size: clamp(1.75rem, 4vw, 2.5rem);
+    font-weight: 700;
+}
+
+.contactList {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.25rem;
+}
+
+.contactList a:hover {
+    text-decoration: underline;
+}
+
+.contactLabel {
+    display: block;
+    margin-bottom: 0.2rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    opacity: 0.75;
+}
+
+.buttonLight {
+    background: #fff;
+    color: var(--accent);
+}
+
+.social {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.85rem 1.2rem;
+    border: 1px solid color-mix(in srgb, #fff 40%, transparent);
+    border-radius: 12px;
+    font-size: 0.95rem;
+    font-weight: 600;
+}
+
+.social:hover {
+    background: color-mix(in srgb, #fff 12%, transparent);
+}
+
+.footer {
+    max-width: 1160px;
+    margin: 0 auto;
+    padding: 1.5rem var(--pad) 2.5rem;
+    font-size: 0.85rem;
+    color: var(--soft);
+}
+
+@media (max-width: 760px) {
+    .nav,
+    .topbarPhone {
+        display: none;
+    }
+
+    .hero,
+    .split,
+    .services,
+    .contactList {
+        grid-template-columns: 1fr;
+    }
+
+    .photo {
+        order: -1;
+        max-width: 280px;
+    }
+}

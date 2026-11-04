@@ -6,7 +6,7 @@ import { AuthProvider } from './context/AuthContext'
 import ProtectedRoute from './assets/components/ProtectedRoute'
 import Account from './pages/account/Account'
 import EditorPage from './pages/editor/EditorPage'
-
+import TemplateGallery from './pages/templateGallery/TemplateGallery'
 import './App.css'
 
 function App() {
@@ -16,6 +16,7 @@ function App() {
         <Routes>
           <Route element={<AppLayout />}>
             <Route path="/" element={<MainPage />} />
+            <Route path="/templates" element={<TemplateGallery />} />
             <Route
               path="/account"
               element={

@@ -612,3 +612,61 @@
 .ed-save-error {
   color: #b42318;
 }
+
+.ed-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.ed-list-item {
+  border: 1px solid var(--paper-2);
+  border-radius: 14px;
+  background: #faf9f6;
+}
+
+.ed-list-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.35rem 0.35rem 0.35rem 0.8rem;
+  cursor: pointer;
+  list-style: none;
+}
+
+.ed-list-summary::-webkit-details-marker {
+  display: none;
+}
+
+.ed-list-title {
+  min-width: 0;
+  overflow: hidden;
+  font-size: 0.9rem;
+  font-weight: 600;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.ed-list-actions {
+  display: flex;
+  flex-shrink: 0;
+}
+
+.ed-list-actions .ed-icon-button {
+  width: 28px;
+  height: 28px;
+  font-size: 0.75rem;
+}
+
+.ed-list-actions .ed-icon-button:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.ed-list-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  padding: 0.4rem 0.8rem 0.9rem;
+}

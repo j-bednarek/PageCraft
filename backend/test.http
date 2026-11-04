@@ -47,3 +47,5 @@ GET {{api}}/public/pages/moje-portfolio-2026
 
 ### Wylogowanie
 POST {{api}}/auth/logout 
+### Lista szablonów (publiczna)
+GET {{api}}/templates
