@@ -158,3 +158,80 @@
   clip: rect(0 0 0 0);
   white-space: nowrap;
 }
+
+.tg-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1500;
+  display: grid;
+  place-items: center;
+  padding: 1.5rem;
+  background: rgba(13, 18, 15, 0.55);
+}
+
+.tg-modal {
+  display: flex;
+  flex-direction: column;
+  width: min(1200px, 100%);
+  height: min(860px, 100%);
+  overflow: hidden;
+  border-radius: 18px;
+  background: #fff;
+}
+
+.tg-modal-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.9rem 1.1rem;
+  border-bottom: 1px solid #e2e5df;
+  color: #0d120f;
+}
+
+.tg-modal-head h2 {
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.tg-modal-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.tg-btn {
+  padding: 0.7rem 1.3rem;
+  font-weight: 600;
+}
+
+.tg-close {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border: 0;
+  border-radius: 10px;
+  background: #f4f5f2;
+  color: #0d120f;
+  cursor: pointer;
+}
+
+.tg-modal-body {
+  flex: 1;
+  min-height: 0;
+}
+
+.tg-modal-body iframe {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+@media (max-width: 480px) {
+  .tg-modal-head {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

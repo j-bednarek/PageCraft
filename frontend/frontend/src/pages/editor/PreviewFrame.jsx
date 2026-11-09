@@ -53,8 +53,8 @@ export default function PreviewFrame({ css, children }) {
         }
 
         doc.body.style.margin = '0';
-        doc.removeEventListener('click', handleLinkClick);
-        doc.addEventListener('click', handleLinkClick);
+        doc.removeEventListener('click', handleLinkClick, true);
+doc.addEventListener('click', handleLinkClick, true);
         setMountNode(doc.body);
     }
 

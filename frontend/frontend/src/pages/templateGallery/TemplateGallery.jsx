@@ -3,7 +3,8 @@ import api from '../../api/client';
 import { getErrorMessage } from '../../api/errors';
 import { getTemplate } from '../templates/registry';
 import './templateGallery.css';
-
+import { createPortal } from 'react-dom';
+import PreviewFrame from '../editor/PreviewFrame';
 const CATEGORY_LABELS = {
     all: 'All',
     portfolio: 'Portfolio',
@@ -18,7 +19,7 @@ function categoryLabel(category) {
 }
 
 function TemplateThumb({ template }) {
-    if (!template.definition) {
+    if (!template.thumbnail_url) {
         return (
             <div className="tg-thumb tg-thumb-empty" aria-hidden="true">
                 <span>{template.name}</span>
@@ -28,16 +29,68 @@ function TemplateThumb({ template }) {
 
     return (
         <div className="tg-thumb">
-            <img src={template.definition.thumbnail} alt="" loading="lazy" />
+            <img src={template.thumbnail_url} alt="" loading="lazy" />
         </div>
     );
 }
 
+
+function PreviewModal({ template, onClose, onUse, isCreating }) {
+    const Template = template.definition.component;
+
+    useEffect(() => {
+        const handleKeyDown = (e) => {
+            if (e.key === 'Escape') onClose();
+        };
+        document.addEventListener('keydown', handleKeyDown);
+
+        const previousOverflow = document.body.style.overflow;
+        document.body.style.overflow = 'hidden';
+
+        return () => {
+            document.removeEventListener('keydown', handleKeyDown);
+            document.body.style.overflow = previousOverflow;
+        };
+    }, [onClose]);
+
+    return createPortal(
+        <div className="tg-overlay" onClick={onClose}>
+            <div
+                className="tg-modal"
+                role="dialog"
+                aria-modal="true"
+                aria-label={template.name}
+                onClick={(e) => e.stopPropagation()}
+            >
+                <header className="tg-modal-head">
+                    <div>
+                        <h2>{template.name}</h2>
+                        <span className="tg-category">{categoryLabel(template.category)}</span>
+                    </div>
+                    <div className="tg-modal-actions">
+                        <button type="button" className="cta-button tg-btn" onClick={onUse} disabled={isCreating}>
+                            {isCreating ? 'Creating…' : 'Use template'}
+                        </button>
+                        <button type="button" className="tg-close" aria-label="Close preview" onClick={onClose}>
+                            <i className="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                </header>
+                <div className="tg-modal-body">
+                    <PreviewFrame css={template.definition.css}>
+                        <Template content={template.definition.defaultContent} />
+                    </PreviewFrame>
+                </div>
+            </div>
+        </div>,
+        document.body
+    );
+}
 export default function TemplateGallery() {
     const [templates, setTemplates] = useState(null);
     const [error, setError] = useState('');
 const [category, setCategory] = useState('all');
-
+const [previewed, setPreviewed] = useState(null);
 const categories = templates ? ['all', ...new Set(templates.map((t) => t.category))] : [];
 const visible = templates ? templates.filter((t) => t.category === category || category === 'all') : [];
     useEffect(() => {
@@ -70,12 +123,12 @@ const visible = templates ? templates.filter((t) => t.category === category || c
             {!error && templates === null && <p className="tg-loading">Loading templates…</p>}
 
            {categories.length > 0 && (
-    <div className="tg-filters" role="group" aria-label="Filter by category">
-        {categories.map((c) => (
+            <div className="tg-filters" role="group" aria-label="Filter by category">
+            {categories.map((c) => (
             <button
                 key={c}
                 type="button"
-                className={category === c ? 'tg-filter tg-filter-active' : 'tg-filter'}
+                className={category === c ? 'tg-filter active' : 'tg-filter'}
                 aria-pressed={c === category}
                 onClick={() => setCategory(c)}
             >
@@ -88,7 +141,8 @@ const visible = templates ? templates.filter((t) => t.category === category || c
 <div className="tg-grid">
     {visible.map((template) => (
         <article className="tg-card" key={template.id}>
-            <button type="button" className="tg-card-preview">
+            
+<button type="button" className="tg-card-preview" onClick={() => setPreviewed(template)}>
                 <TemplateThumb template={template} />
                 <span className="tg-sr-only">Preview {template.name}</span>
             </button>
@@ -101,7 +155,14 @@ const visible = templates ? templates.filter((t) => t.category === category || c
             </div>
         </article>
     ))}
+    
 </div>
+{previewed && (
+    <PreviewModal
+        template={previewed}
+        onClose={() => setPreviewed(null)}
+    />
+)}
         </div>
     );
 }
