@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import api from '../../api/client';
 import { getErrorMessage } from '../../api/errors';
 import { formatDate } from './format';
@@ -21,10 +21,8 @@ function UsageCard({ label, used, limit, hint }) {
 }
 
 export default function PagesTab({ usage }) {
-    const navigate = useNavigate();
     const [pages, setPages] = useState(null);
     const [error, setError] = useState('');
-    const [isCreating, setIsCreating] = useState(false);
 
     useEffect(() => {
         let ignore = false;
@@ -33,18 +31,6 @@ export default function PagesTab({ usage }) {
             .catch((err) => { if (!ignore) setError(getErrorMessage(err)); });
         return () => { ignore = true; };
     }, []);
-
-    async function createPage() {
-        setIsCreating(true);
-        setError('');
-        try {
-            const response = await api.post('/pages', { templateKey: 'portfolio_minimal' });
-            navigate(`/editor/${response.data.page.id}`);
-        } catch (err) {
-            setError(getErrorMessage(err));
-            setIsCreating(false);
-        }
-    }
 
     async function deletePage(page) {
         if (!window.confirm(`Delete "${page.title}"? This cannot be undone.`)) {
@@ -68,9 +54,7 @@ export default function PagesTab({ usage }) {
                     <h2>My pages</h2>
                     <p className="acc-subtle">Everything you have built, published or not.</p>
                 </div>
-                <button type="button" className="cta-button acc-btn" onClick={createPage} disabled={isCreating}>
-                    {isCreating ? 'Creating…' : 'New page'}
-                </button>
+                <Link to="/templates" className="cta-button acc-btn">New page</Link>
             </div>
 
             <div className="acc-usage-grid">
@@ -97,10 +81,7 @@ export default function PagesTab({ usage }) {
                         Pick a template and have your first one-page site ready in a few minutes.
                     </p>
                     <div className="acc-actions">
-                        <button type="button" className="cta-button acc-btn" onClick={createPage} disabled={isCreating}>
-                            {isCreating ? 'Creating…' : 'Start building'}
-                        </button>
-                        <Link to="/templates" className="acc-btn acc-btn-secondary">Browse templates</Link>
+                        <Link to="/templates" className="cta-button acc-btn">Browse templates</Link>
                     </div>
                 </div>
             )}

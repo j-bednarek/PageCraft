@@ -5,6 +5,9 @@ import { getTemplate } from '../templates/registry';
 import './templateGallery.css';
 import { createPortal } from 'react-dom';
 import PreviewFrame from '../editor/PreviewFrame';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
+import AuthModal from '../../assets/components/AuthModal';
 const CATEGORY_LABELS = {
     all: 'All',
     portfolio: 'Portfolio',
@@ -93,6 +96,13 @@ const [category, setCategory] = useState('all');
 const [previewed, setPreviewed] = useState(null);
 const categories = templates ? ['all', ...new Set(templates.map((t) => t.category))] : [];
 const visible = templates ? templates.filter((t) => t.category === category || category === 'all') : [];
+
+
+const navigate = useNavigate();
+const { user } = useAuth();
+const [pendingKey, setPendingKey] = useState(null);
+const [authMode, setAuthMode] = useState(null);
+const [isCreating, setIsCreating] = useState(false);
     useEffect(() => {
         document.body.classList.add('light-page');
         return () => document.body.classList.remove('light-page');
@@ -111,6 +121,35 @@ const visible = templates ? templates.filter((t) => t.category === category || c
             .catch((err) => { if (!ignore) setError(getErrorMessage(err)); });
         return () => { ignore = true; };
     }, []);
+    async function createPage(templateKey) {
+    setIsCreating(true);
+    setError('');
+    try {
+        const response = await api.post('/pages', { templateKey });
+        navigate(`/editor/${response.data.page.id}`);
+    } catch (err) {
+        setError(getErrorMessage(err));
+        setIsCreating(false);
+        setPreviewed(null);
+    }
+}
+
+function chooseTemplate(templateKey) {
+    if (!user) {
+        setPreviewed(null);
+        setPendingKey(templateKey);
+        setAuthMode('login');
+        return;
+    }
+    createPage(templateKey);
+}
+
+function handleAuthSuccess() {
+    setAuthMode(null);
+    if (pendingKey) {
+        createPage(pendingKey);
+    }
+}
 
     return (
         <div className="tg-page">
@@ -151,7 +190,14 @@ const visible = templates ? templates.filter((t) => t.category === category || c
                     <h2>{template.name}</h2>
                     <span className="tg-category">{categoryLabel(template.category)}</span>
                 </div>
-                <button type="button" className="tg-use">Use template</button>
+                <button
+    type="button"
+    className="tg-use"
+    onClick={() => chooseTemplate(template.component_key)}
+    disabled={isCreating}
+>
+    Use template
+</button>
             </div>
         </article>
     ))}
@@ -161,6 +207,16 @@ const visible = templates ? templates.filter((t) => t.category === category || c
     <PreviewModal
         template={previewed}
         onClose={() => setPreviewed(null)}
+        onUse={() => chooseTemplate(previewed.component_key)}
+        isCreating={isCreating}
+    />
+)}
+{authMode && (
+    <AuthModal
+        mode={authMode}
+        onClose={() => setAuthMode(null)}
+        onSwitch={setAuthMode}
+        onSuccess={handleAuthSuccess}
     />
 )}
         </div>

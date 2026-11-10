@@ -4,7 +4,7 @@ import Login from '../../pages/login/Login';
 import Register from '../../pages/login/Register';
 import './authModal.css';
 
-export default function AuthModal({ mode, onClose, onSwitch }) {
+export default function AuthModal({ mode, onClose, onSwitch, onSuccess }) {
     const isLogin = mode === 'login';
 
     useEffect(() => {
@@ -51,7 +51,7 @@ export default function AuthModal({ mode, onClose, onSwitch }) {
                         : 'Free forever. No credit card needed.'}
                 </p>
 
-                {isLogin ? <Login onSuccess={onClose} /> : <Register onSuccess={onClose} />}
+                {isLogin ? <Login onSuccess={onSuccess ?? onClose} /> : <Register onSuccess={onSuccess ?? onClose} />}
 
                 <p className="auth-switch">
                     {isLogin ? "Don't have an account?" : 'Already have an account?'}{' '}

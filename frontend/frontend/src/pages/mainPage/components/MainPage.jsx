@@ -1,7 +1,6 @@
-import React from 'react';
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 
-import videoBg from '../../../assets/heroSectionBg.mp4';
 import editorExample from '../../../assets/creatorExample.png';
 import './mainPage.css';
 
@@ -11,7 +10,6 @@ import exp3 from '../../../assets/exp3.png';
 import exp4 from '../../../assets/exp4.png';
 import exp5 from '../../../assets/exp5.png';
 import dashboardImg from '../../../assets/dashboard.png'
-import checkedIcon from '../../../assets/checkedIcon.svg'
 export default function HeroSection() {
         const [activeCategory, setActiveCategory] = useState("All");
 
@@ -30,7 +28,7 @@ export default function HeroSection() {
                     <span className="gradient1">Ship in minutes.</span></h1>
                 <h4>PageCraft gives you a live visual editor, beautiful templates, and instant publishing - everything you need to launch a professional one-page site today.</h4>
                 <div className="hero-buttons">
-                    <button className="cta-button">Start building free</button>
+                    <Link to="/templates" className="cta-button">Start building free</Link>
                     <button className="secondary-button">Learn more</button>
                 </div>
                 <div className="hero-stats">
@@ -93,7 +91,7 @@ export default function HeroSection() {
                 <p>Dusk Personal<br /><button className='yellowBtn'>Warm</button> <button className='yellowBtn'>Editorial</button></p>
                 </div>
             </div>
-            <button className="browseTemplates">Browse all 40+ templates</button>
+            <Link to="/templates" className="browseTemplates">Browse all templates</Link>
         </div>
          <div className="editorExample height">
             <h5>User Dashboard</h5>

@@ -28,6 +28,12 @@ function handleLinkClick(event) {
     }
 }
 
+function forwardEscape(event) {
+    if (event.key === 'Escape') {
+        document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
+    }
+}
+
 export default function PreviewFrame({ css, children }) {
     const iframeRef = useRef(null);
     const [mountNode, setMountNode] = useState(null);
@@ -54,7 +60,9 @@ export default function PreviewFrame({ css, children }) {
 
         doc.body.style.margin = '0';
         doc.removeEventListener('click', handleLinkClick, true);
-doc.addEventListener('click', handleLinkClick, true);
+        doc.addEventListener('click', handleLinkClick, true);
+        doc.removeEventListener('keydown', forwardEscape);
+        doc.addEventListener('keydown', forwardEscape);
         setMountNode(doc.body);
     }
 
