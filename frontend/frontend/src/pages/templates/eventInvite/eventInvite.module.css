@@ -1,0 +1,321 @@
+.page,
+.page * {
+    box-sizing: border-box;
+}
+
+.page :where(h1, h2, h3, p, ol, li) {
+    margin: 0;
+    padding: 0;
+    width: auto;
+    font-size: inherit;
+    font-weight: 400;
+    line-height: inherit;
+    color: inherit;
+    list-style: none;
+}
+
+.page :where(a) {
+    color: inherit;
+    text-decoration: none;
+}
+
+.page a:hover {
+    text-decoration: none;
+}
+
+.page :where(img) {
+    display: block;
+    max-width: 100%;
+}
+
+.page {
+    --pad: clamp(1.25rem, 5vw, 4rem);
+    --line: color-mix(in srgb, var(--ink) 14%, transparent);
+    --soft: color-mix(in srgb, var(--ink) 65%, var(--bg));
+    --card: color-mix(in srgb, var(--accent) 7%, var(--bg));
+
+    min-height: 100vh;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font, system-ui, sans-serif);
+    font-size: 17px;
+    line-height: 1.65;
+    text-align: center;
+    -webkit-font-smoothing: antialiased;
+}
+
+.hero {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 82vh;
+    justify-content: center;
+    padding: clamp(3rem, 8vw, 6rem) var(--pad) 3rem;
+    background:
+        radial-gradient(ellipse at 50% 0%, color-mix(in srgb, var(--accent) 14%, transparent), transparent 60%),
+        var(--bg);
+}
+
+.eyebrow {
+    margin-bottom: 1.5rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--accent);
+}
+
+.title {
+    font-family: var(--display, Georgia, serif);
+    font-size: clamp(3.5rem, 11vw, 7.5rem);
+    line-height: 0.95;
+    color: var(--ink);
+}
+
+.meta {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem 1rem;
+    margin-top: 2rem;
+    font-size: 1.1rem;
+}
+
+.metaDot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+}
+
+.photo {
+    width: min(340px, 80%);
+    aspect-ratio: 3 / 4;
+    margin-top: 2.5rem;
+    border-radius: 999px 999px 24px 24px;
+    overflow: hidden;
+    background: var(--card);
+}
+
+.photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.nav {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem 2rem;
+    margin-top: 3rem;
+    font-size: 0.95rem;
+    color: var(--soft);
+}
+
+.nav a {
+    border-bottom: 1px solid transparent;
+}
+
+.nav a:hover {
+    border-bottom-color: var(--accent);
+    color: var(--ink);
+}
+
+.sectionTitle {
+    margin-bottom: 1.5rem;
+    font-family: var(--display, Georgia, serif);
+    font-size: clamp(2.25rem, 6vw, 3.5rem);
+    line-height: 1.05;
+}
+
+.intro {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: clamp(3rem, 7vw, 5rem) var(--pad);
+    border-top: 1px solid var(--line);
+}
+
+.introText {
+    font-size: 1.15rem;
+    color: var(--soft);
+}
+
+.section {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: clamp(2.5rem, 6vw, 4.5rem) var(--pad);
+}
+
+.timeline {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 1.75rem;
+    text-align: left;
+}
+
+.timeline::before {
+    content: '';
+    position: absolute;
+    top: 0.5rem;
+    bottom: 0.5rem;
+    left: 5.25rem;
+    width: 1px;
+    background: var(--line);
+}
+
+.step {
+    position: relative;
+    display: grid;
+    grid-template-columns: 4.5rem minmax(0, 1fr);
+    gap: 1.5rem;
+}
+
+.step::before {
+    content: '';
+    position: absolute;
+    top: 0.55rem;
+    left: calc(5.25rem - 5px);
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 0 4px var(--bg);
+}
+
+.time {
+    font-family: var(--display, Georgia, serif);
+    font-size: 1.35rem;
+    line-height: 1.3;
+    color: var(--accent);
+    text-align: right;
+}
+
+.stepBody {
+    padding-left: 0.5rem;
+}
+
+.stepTitle {
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.stepText {
+    margin-top: 0.2rem;
+    color: var(--soft);
+}
+
+.locationCard {
+    padding: clamp(2rem, 5vw, 3rem);
+    border-radius: 28px;
+    background: var(--card);
+}
+
+.venue {
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.address {
+    margin-top: 0.25rem;
+    color: var(--soft);
+}
+
+.note {
+    max-width: 30rem;
+    margin: 1.25rem auto 0;
+    color: var(--soft);
+}
+
+.buttonGhost {
+    display: inline-block;
+    margin-top: 1.75rem;
+    padding: 0.8rem 1.5rem;
+    border: 1px solid var(--accent);
+    border-radius: 999px;
+    color: var(--accent);
+    font-weight: 600;
+    transition: background 0.2s ease, color 0.2s ease;
+}
+
+.buttonGhost:hover {
+    background: var(--accent);
+    color: #fff;
+}
+
+.rsvp {
+    margin-top: clamp(2rem, 5vw, 3rem);
+    padding: clamp(3.5rem, 9vw, 6rem) var(--pad);
+    background: var(--accent);
+    color: #fff;
+}
+
+.rsvpTitle {
+    font-family: var(--display, Georgia, serif);
+    font-size: clamp(2.5rem, 7vw, 4rem);
+    line-height: 1.05;
+}
+
+.rsvpText {
+    max-width: 34rem;
+    margin: 1.25rem auto 0;
+    opacity: 0.9;
+}
+
+.rsvpActions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem 1.5rem;
+    margin-top: 2.25rem;
+}
+
+.button {
+    padding: 0.95rem 1.8rem;
+    border-radius: 999px;
+    background: #fff;
+    color: var(--accent);
+    font-weight: 600;
+}
+
+.button:hover {
+    background: color-mix(in srgb, #fff 88%, var(--accent));
+}
+
+.phone {
+    border-bottom: 1px solid color-mix(in srgb, #fff 50%, transparent);
+    font-weight: 500;
+}
+
+.footer {
+    padding: 2rem var(--pad) 2.5rem;
+    font-family: var(--display, Georgia, serif);
+    font-size: 1.25rem;
+    color: var(--soft);
+}
+
+@media (max-width: 760px) {
+    .meta {
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+
+    .metaDot {
+        display: none;
+    }
+
+    .timeline::before {
+        left: 4.25rem;
+    }
+
+    .step {
+        grid-template-columns: 3.5rem minmax(0, 1fr);
+    }
+
+    .step::before {
+        left: calc(4.25rem - 5px);
+    }
+}
