@@ -5,7 +5,7 @@ const { createPageLimiter } = require('../middleware/limiters');
 const { DRAFT_LIMIT } = require('../utils/plans');
 const { parseId } = require('../utils/ids');
 const router = express.Router();
-
+const { removePrefix, pagePrefix } = require('../storage');
 const TITLE_MAX = 100;
 const CONTENT_MAX_BYTES = 100 * 1024;
 
@@ -193,7 +193,8 @@ router.delete('/:id', async (req, res) => {
         await prisma.pages.delete({
             where: { id: id, user_id: req.session.userId }
         });
-
+        removePrefix(pagePrefix(req.session.userId, id))
+    .catch((err) => console.error('Błąd usuwania plików strony:', err));
         res.json({ message: 'Strona została usunięta.' });
     } catch (error) {
         if (error.code === 'P2025') {
