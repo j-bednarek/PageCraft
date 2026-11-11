@@ -49,3 +49,16 @@ GET {{api}}/public/pages/moje-portfolio-2026
 POST {{api}}/auth/logout 
 ### Lista szablonów (publiczna)
 GET {{api}}/templates
+
+### Podpisany adres dla mojej strony
+# @name presign
+POST {{api}}/uploads/presign
+Content-Type: application/json
+
+{ "pageId": {{created.response.body.page.id}}, "contentType": "image/png" }
+
+### Upload pliku na podpisany adres
+PUT {{presign.response.body.uploadUrl}}
+Content-Type: image/png
+
+< ./test.png
