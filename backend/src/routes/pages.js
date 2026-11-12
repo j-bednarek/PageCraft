@@ -3,12 +3,12 @@ const { prisma } = require('../db');
 const requireAuth = require('../middleware/requireAuth');
 const { createPageLimiter } = require('../middleware/limiters');
 const { DRAFT_LIMIT } = require('../utils/plans');
-
+const { parseId } = require('../utils/ids');
 const router = express.Router();
-
+const { removePrefix, pagePrefix } = require('../storage');
 const TITLE_MAX = 100;
 const CONTENT_MAX_BYTES = 100 * 1024;
-const MAX_ID = 2147483647;
+
 const PAGE_NOT_FOUND = { error: 'Nie znaleziono strony.' };
 
 const EDITOR_FIELDS = {
@@ -22,13 +22,7 @@ const EDITOR_FIELDS = {
     templates: { select: { component_key: true, name: true } }
 };
 
-function parseId(value) {
-    const id = Number(value);
-    if (!Number.isInteger(id) || id < 1 || id > MAX_ID) {
-        return null;
-    }
-    return id;
-}
+
 
 function isPlainObject(value) {
     return value !== null && typeof value === 'object' && !Array.isArray(value);
@@ -199,7 +193,8 @@ router.delete('/:id', async (req, res) => {
         await prisma.pages.delete({
             where: { id: id, user_id: req.session.userId }
         });
-
+        removePrefix(pagePrefix(req.session.userId, id))
+    .catch((err) => console.error('Błąd usuwania plików strony:', err));
         res.json({ message: 'Strona została usunięta.' });
     } catch (error) {
         if (error.code === 'P2025') {

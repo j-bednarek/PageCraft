@@ -59,11 +59,17 @@ const createPageLimiter = limiter({
     message: { error: 'Tworzysz strony zbyt szybko. Spróbuj ponownie za godzinę.' },
     keyGenerator: byUser
 });
-
+const uploadLimiter = limiter({
+    windowMs: ONE_HOUR,
+    limit: 100,
+    message: { error: 'Zbyt wiele uploadów. Spróbuj ponownie za godzinę.' },
+    keyGenerator: byUser
+});
 module.exports = {
     loginIpLimiter,
     loginEmailLimiter,
     registerLimiter,
     accountLimiter,
-    createPageLimiter
+    createPageLimiter,
+    uploadLimiter
 };
