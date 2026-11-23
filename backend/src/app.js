@@ -10,7 +10,7 @@ const pagesRoutes = require('./routes/pages');
 const publicRoutes = require('./routes/public');
 const templatesRoutes = require('./routes/templates');
 const uploadsRoutes = require('./routes/uploads');
-
+const slugsRoutes = require('./routes/slugs');
 
 const app = express();
 
@@ -24,7 +24,7 @@ app.use(cors({
 }));
 app.use(express.json({ limit: '200kb' }));
 app.use(sessionMiddleware);
-
+app.use('/api/slugs', slugsRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/account', accountRoutes);
 app.use('/api/plans', plansRoutes);

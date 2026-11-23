@@ -3,7 +3,7 @@ const bcrypt = require('bcrypt');
 const { prisma } = require('../db');
 const requireAuth = require('../middleware/requireAuth');
 const { accountLimiter } = require('../middleware/limiters');
-const { removePrefix, pagePrefix } = require('../storage');
+const { removePrefix, userPrefix } = require('../storage');
 const { DRAFT_LIMIT, publicPlan, getCurrentPlan } = require('../utils/plans');
 const {
     EMAIL_REGEX,
@@ -163,7 +163,7 @@ router.delete('/', accountLimiter, async (req, res) => {
             prisma.subscriptions.deleteMany({ where: { user_id: user.id } }),
             prisma.users.delete({ where: { id: user.id } })
         ]);
-        removePrefix(userPrefix(user.id))
+        await removePrefix(userPrefix(user.id))
     .catch((err) => console.error('Błąd usuwania plików konta:', err));
         await destroyUserSessions(user.id);
         req.session.destroy(() => {
