@@ -7,11 +7,11 @@ const authRoutes = require('./routes/auth');
 const accountRoutes = require('./routes/account');
 const plansRoutes = require('./routes/plans');
 const pagesRoutes = require('./routes/pages');
-const publicRoutes = require('./routes/public');
+
 const templatesRoutes = require('./routes/templates');
 const uploadsRoutes = require('./routes/uploads');
 const slugsRoutes = require('./routes/slugs');
-
+const siteRoutes = require('./routes/site');
 const app = express();
 
 if (process.env.NODE_ENV === 'production') {
@@ -29,10 +29,11 @@ app.use('/api/auth', authRoutes);
 app.use('/api/account', accountRoutes);
 app.use('/api/plans', plansRoutes);
 app.use('/api/pages', pagesRoutes);
-app.use('/api/public', publicRoutes);
+
 app.use('/api/templates', templatesRoutes);
 app.use('/api/uploads', uploadsRoutes);
 app.use('/api', notFound);
+app.use(siteRoutes);
 app.use(errorHandler);
 
 module.exports = app;
