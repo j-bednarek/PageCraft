@@ -65,11 +65,26 @@ const uploadLimiter = limiter({
     message: { error: 'Zbyt wiele uploadów. Spróbuj ponownie za godzinę.' },
     keyGenerator: byUser
 });
+const slugCheckLimiter = limiter({
+    windowMs: 60 * 1000,
+    limit: 60,
+    message: { error: 'Zbyt wiele sprawdzeń adresu. Odczekaj chwilę.' },
+    keyGenerator: byUser
+});
+
+const publishLimiter = limiter({
+    windowMs: ONE_HOUR,
+    limit: 60,
+    message: { error: 'Zbyt wiele publikacji. Spróbuj ponownie za godzinę.' },
+    keyGenerator: byUser
+});
 module.exports = {
     loginIpLimiter,
     loginEmailLimiter,
     registerLimiter,
     accountLimiter,
     createPageLimiter,
-    uploadLimiter
+    uploadLimiter,
+    slugCheckLimiter,
+    publishLimiter
 };

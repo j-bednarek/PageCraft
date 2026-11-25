@@ -5,7 +5,7 @@ import { contentReducer, withDefaults } from './contentState';
 import PreviewFrame from './PreviewFrame';
 import PageEdit from './PageEdit';
 import { GOOGLE_FONTS_URL } from '../../assets/shared/fonts';
-
+import PublishModal from './PublishModal';
 import './editor.css';
 
 const DEVICES = [
@@ -23,6 +23,8 @@ const SAVE_LABELS = {
 export default function Editor({ page, template }) {
     const [device, setDevice] = useState('desktop');
     const [title, setTitle] = useState(page.title || 'Untitled page');
+    const [publication, setPublication] = useState({ status: page.status, slug: page.slug });
+    const [isPublishOpen, setIsPublishOpen] = useState(false);
     const [content, dispatch] = useReducer(
         contentReducer,
         page.content,
@@ -61,7 +63,7 @@ export default function Editor({ page, template }) {
                             aria-label="Page title"
                             onChange={(e) => setTitle(e.target.value)}
                         />
-                        <span className="ed-badge">{page.status ? 'Published' : 'Draft'}</span>
+                        <span className="ed-badge">{publication.status ? 'Published' : 'Draft'}</span>
                         <span className={`ed-save ed-save-${saveStatus}`}>{SAVE_LABELS[saveStatus]}</span>
                     </div>
                 </div>
@@ -93,9 +95,15 @@ export default function Editor({ page, template }) {
                     >
                         Reset
                     </button>
-                    <button type="button" className="ed-button-primary" disabled title="Publishing is coming soon">
-                        Publish
-                    </button>
+                   <button
+                        type="button"
+                        className="ed-button-primary"
+                        onClick={() => setIsPublishOpen(true)}
+                        disabled={saveStatus !== 'saved'}
+                        title={saveStatus !== 'saved' ? 'Wait until your changes are saved' : undefined}
+                    >
+                        {publication.status ? 'Update live page' : 'Publish'}
+</button>
                 </div>
             </header>
 
@@ -114,6 +122,15 @@ export default function Editor({ page, template }) {
                     </PreviewFrame>
                 </div>
             </main>
+            {isPublishOpen && (
+    <PublishModal
+        pageId={page.id}
+        title={title}
+        publication={publication}
+        onClose={() => setIsPublishOpen(false)}
+        onChange={setPublication}
+    />
+)}
         </div>
     );
 }

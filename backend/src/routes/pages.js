@@ -1,14 +1,18 @@
 const express = require('express');
 const { prisma } = require('../db');
 const requireAuth = require('../middleware/requireAuth');
-const { createPageLimiter } = require('../middleware/limiters');
-const { DRAFT_LIMIT } = require('../utils/plans');
+
+
 const { parseId } = require('../utils/ids');
 const router = express.Router();
 const { removePrefix, pagePrefix } = require('../storage');
 const TITLE_MAX = 100;
 const CONTENT_MAX_BYTES = 100 * 1024;
-
+const { Prisma } = require('@prisma/client');
+const { createPageLimiter, publishLimiter } = require('../middleware/limiters');
+const { DRAFT_LIMIT, getCurrentPlan } = require('../utils/plans');
+const { normalizeSlug, slugError } = require('../utils/slugs');
+const { renderPublishedPage } = require('../render');
 const PAGE_NOT_FOUND = { error: 'Nie znaleziono strony.' };
 
 const EDITOR_FIELDS = {
@@ -22,7 +26,7 @@ const EDITOR_FIELDS = {
     templates: { select: { component_key: true, name: true } }
 };
 
-
+const PUBLISHED_FIELDS = { id: true, slug: true, status: true, published_at: true };
 
 function isPlainObject(value) {
     return value !== null && typeof value === 'object' && !Array.isArray(value);
@@ -204,5 +208,92 @@ router.delete('/:id', async (req, res) => {
         res.status(500).json({ error: 'Wystąpił błąd serwera.' });
     }
 });
+router.post('/:id/publish', publishLimiter, async (req, res) => {
+    try {
+        const id = parseId(req.params.id);
+        if (!id) {
+            return res.status(404).json(PAGE_NOT_FOUND);
+        }
 
+        const slug = normalizeSlug(req.body?.slug);
+        const error = slugError(slug);
+        if (error) {
+            return res.status(400).json({ error });
+        }
+
+        const userId = req.session.userId;
+        const result = await prisma.$transaction(async (tx) => {
+            const page = await tx.pages.findFirst({
+                where: { id: id, user_id: userId },
+                select: { status: true, title: true, content: true, templates: { select: { component_key: true } } }
+            });
+            if (!page) {
+                return { status: 404, body: PAGE_NOT_FOUND };
+            }
+
+            if (!page.status) {
+                const { plan } = await getCurrentPlan(userId);
+                const publishedCount = await tx.pages.count({ where: { user_id: userId, status: true } });
+                if (plan.max_active_pages !== null && publishedCount >= plan.max_active_pages) {
+                    return {
+                        status: 403,
+                        body: { error: 'Twój plan nie pozwala opublikować kolejnej strony.', code: 'PLAN_LIMIT' }
+                    };
+                }
+            }
+
+            const html = renderPublishedPage({
+                templateKey: page.templates.component_key,
+                content: page.content,
+                title: page.title
+            });
+
+            const updated = await tx.pages.update({
+                where: { id: id },
+                data: {
+                    slug: slug,
+                    status: true,
+                    published_content: page.content,
+                    published_html: html,
+                    published_at: new Date()
+                },
+                select: PUBLISHED_FIELDS
+            });
+            return { status: 200, body: { page: updated } };
+        }, { isolationLevel: 'Serializable' });
+
+        res.status(result.status).json(result.body);
+    } catch (error) {
+        if (error.code === 'P2002') {
+            return res.status(409).json({ error: 'Ten adres jest już zajęty.' });
+        }
+        if (error.code === 'P2034') {
+            return res.status(409).json({ error: 'Strona jest właśnie zmieniana. Spróbuj ponownie.' });
+        }
+        console.error('Błąd publikacji strony:', error);
+        res.status(500).json({ error: 'Wystąpił błąd serwera.' });
+    }
+});
+router.post('/:id/unpublish', async (req, res) => {
+    try {
+        const id = parseId(req.params.id);
+        if (!id) {
+            return res.status(404).json(PAGE_NOT_FOUND);
+        }
+
+        const page = await prisma.pages.update({
+            where: { id: id, user_id: req.session.userId },
+            data: { status: false, published_content: Prisma.DbNull, published_html: null, published_at: null },
+            select: PUBLISHED_FIELDS
+        });
+
+        res.json({ page });
+    } catch (error) {
+        if (error.code === 'P2025') {
+            return res.status(404).json(PAGE_NOT_FOUND);
+        }
+        console.error('Błąd wyłączania strony:', error);
+        res.status(500).json({ error: 'Wystąpił błąd serwera.' });
+    }
+});
 module.exports = router;
