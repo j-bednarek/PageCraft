@@ -3,6 +3,8 @@ node_modules/
 .env
 .env.*
 !.env.example
+!frontend/frontend/.env.development
+!frontend/frontend/.env.production
 
 dist/
 dist-ssr/

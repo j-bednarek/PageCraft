@@ -36,7 +36,7 @@ router.get('/:slug', async (req, res) => {
         }
 
         const page = await prisma.pages.findFirst({
-            where: { slug: slug, published: true },
+            where: { slug: slug, status: true },
             select: { published_html: true }
         });
         if (!page?.published_html) {

@@ -1,8 +1,8 @@
 const express = require('express');
 const { prisma } = require('../db');
 const requireAuth = require('../middleware/requireAuth');
-const { createPageLimiter } = require('../middleware/limiters');
-const { DRAFT_LIMIT } = require('../utils/plans');
+
+
 const { parseId } = require('../utils/ids');
 const router = express.Router();
 const { removePrefix, pagePrefix } = require('../storage');
@@ -234,7 +234,7 @@ router.post('/:id/publish', publishLimiter, async (req, res) => {
             if (!page.status) {
                 const { plan } = await getCurrentPlan(userId);
                 const publishedCount = await tx.pages.count({ where: { user_id: userId, status: true } });
-                if (plan.max_published_pages !== null && publishedCount >= plan.max_published_pages) {
+                if (plan.max_active_pages !== null && publishedCount >= plan.max_active_pages) {
                     return {
                         status: 403,
                         body: { error: 'Twój plan nie pozwala opublikować kolejnej strony.', code: 'PLAN_LIMIT' }

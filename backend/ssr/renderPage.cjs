@@ -23139,13 +23139,50 @@ var definition_default = {
 	]
 };
 //#endregion
+//#region src/pages/templates/seo.js
+var SEO_DEFAULTS = {
+	title: "",
+	description: "",
+	image: ""
+};
+var SEO_FIELDS = [
+	{
+		section: "SEO",
+		path: "seo.title",
+		type: "text",
+		label: "Title in Google and the browser tab"
+	},
+	{
+		section: "SEO",
+		path: "seo.description",
+		type: "textarea",
+		label: "Description in Google"
+	},
+	{
+		section: "SEO",
+		path: "seo.image",
+		type: "image",
+		label: "Image shown when the link is shared"
+	}
+];
+//#endregion
 //#region src/pages/templates/registry.js
+function withSeo(definition) {
+	return {
+		...definition,
+		defaultContent: {
+			...definition.defaultContent,
+			seo: SEO_DEFAULTS
+		},
+		fields: [...definition.fields, ...SEO_FIELDS]
+	};
+}
 var templates = {
-	[definition_default$4.key]: definition_default$4,
-	[definition_default$3.key]: definition_default$3,
-	[definition_default$2.key]: definition_default$2,
-	[definition_default$1.key]: definition_default$1,
-	[definition_default.key]: definition_default
+	[definition_default$4.key]: withSeo(definition_default$4),
+	[definition_default$3.key]: withSeo(definition_default$3),
+	[definition_default$2.key]: withSeo(definition_default$2),
+	[definition_default$1.key]: withSeo(definition_default$1),
+	[definition_default.key]: withSeo(definition_default)
 };
 function getTemplate(key) {
 	return templates[key] ?? null;
